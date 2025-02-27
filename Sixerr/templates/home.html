@@ -1,0 +1,17 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Home Screen</title>
+    </head>
+
+    <body>
+        <h1>Welcome to Sixerr</h1>
+        <div>You are a {{ user.role }}</div>
+
+        <form action="{% url 'logout_view' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </body>

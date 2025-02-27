@@ -1,0 +1,42 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Register Screen</title>
+    </head>
+
+    <body>
+        <form action="{% url 'register_view' %}" method="POST">
+            {% csrf_token %}
+            <div>First Name:
+                {{ form.first_name }}
+            </div>
+            <div>Last Name:
+                {{ form.last_name }}
+            </div>
+            <div>Username:
+                {{ form.username }}
+            </div>
+            <div>Password:
+                {{ form.password1 }}
+            </div>
+            <div>Confirm Password:
+                {{ form.password2 }}
+            </div>
+            <div>Email:
+                {{ form.email }}
+            </div>
+            <div>Role:
+                {{ form.role }}
+            </div>
+            <div>Skill:
+                {{ form.skill }}
+            </div>
+            <button>Submit</button>
+        </form>
+        {% if msg %}
+            <p>Please recheck your registration details</p>
+        {% endif %}
+    </body>
+</html>

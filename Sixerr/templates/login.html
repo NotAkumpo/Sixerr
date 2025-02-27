@@ -1,0 +1,23 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Login Screen</title>
+    </head>
+
+    <body>
+        {% if msg %}
+            <p>Invalid Credentials</p>
+        {% endif %}
+        <form action="{% url 'login_view' %}" method="POST">
+            {% csrf_token %}
+            <div>Username:
+                {{ form.username }}
+            </div>
+            <div>Password:
+                {{ form.password }}
+            </div>
+            <button>Submit</button>
+    </body>
+</html>
