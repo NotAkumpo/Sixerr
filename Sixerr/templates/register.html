@@ -1,42 +1,78 @@
+{% load static %} 
 <!doctype html>
-{% load static %}
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Register Screen</title>
-    </head>
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+    <div class="container">
+        <img src="{% static 'fullLogoBlue.png' %}" alt="Sixerr Logo" class="logo">
 
-    <body>
-        <form action="{% url 'register_view' %}" method="POST">
-            {% csrf_token %}
-            <div>First Name:
-                {{ form.first_name }}
-            </div>
-            <div>Last Name:
-                {{ form.last_name }}
-            </div>
-            <div>Username:
-                {{ form.username }}
-            </div>
-            <div>Password:
-                {{ form.password1 }}
-            </div>
-            <div>Confirm Password:
-                {{ form.password2 }}
-            </div>
-            <div>Email:
-                {{ form.email }}
-            </div>
-            <div>Role:
-                {{ form.role }}
-            </div>
-            <div>Skill:
-                {{ form.skill }}
-            </div>
-            <button>Submit</button>
-        </form>
-        {% if msg %}
-            <p>Please recheck your registration details</p>
-        {% endif %}
-    </body>
+        <div class="rectangle">
+            <h2>Create an Account</h2>
+            <form action="{% url 'register_view' %}" method="POST" class="register-form">
+                {% csrf_token %}
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Password</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="input-group">
+                        <label>Confirm Password</label>
+                        {{ form.password2 }}
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Role</label>
+                        <select name="role" id="id_role" class="dropdown">
+                            <!-- {{ form.role }} -->
+                            <!-- <option selected>Client</option> -->
+                            <option>Client</option>
+                            <option>Admin</option>
+                            <option>Mentor</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Skill</label>
+                        {{ form.skill }}
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Sign In</button>
+            </form>
+
+            {% if msg %}
+                <p class="error-msg">Please recheck your registration details</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
 </html>

@@ -4,14 +4,15 @@
     <head>
         <meta charset="utf-8">
         <title>Home Screen</title>
+        <link rel="stylesheet" href="{% static 'css/home.css' %}">
     </head>
 
     <body>
         <h1>Welcome to Sixerr</h1>
-        <div>You are a {{ user.role }}</div>
+        <div>You are a {{ user.role }}.</div>
 
         <form action="{% url 'logout_view' %}" method="POST">
             {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit" class="submit-btn">Logout</button>
         </form>
     </body>

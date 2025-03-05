@@ -1,23 +1,31 @@
-<!doctype html>
 {% load static %}
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Login Screen</title>
-    </head>
-
-    <body>
+<head>
+    <meta charset="utf-8">
+    <title>Login Screen</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <img src="{% static 'fullLogoBlue.png' %}" class="logo">
+    
+    <div class="rectangle">
         {% if msg %}
-            <p>Invalid Credentials</p>
+            <p class="error-msg">Invalid Credentials</p>
         {% endif %}
-        <form action="{% url 'login_view' %}" method="POST">
+        
+        <form action="{% url 'login_view' %}" method="POST" class="login-form">
             {% csrf_token %}
-            <div>Username:
+            <div class="input-group">
+                <label>Username</label>
                 {{ form.username }}
             </div>
-            <div>Password:
+            <div class="input-group">
+                <label>Password</label>
                 {{ form.password }}
             </div>
-            <button>Submit</button>
-    </body>
+            <button class="submit-btn">Submit</button>
+        </form>
+    </div>
+</body>
 </html>
