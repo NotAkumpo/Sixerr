@@ -11,7 +11,7 @@
     
     <div class="rectangle">
         {% if msg %}
-            <p class="error-msg">Invalid Credentials</p>
+            <p class="error-msg">{{ msg }}</p>
         {% endif %}
         
         <form action="{% url 'login_view' %}" method="POST" class="login-form">
@@ -24,7 +24,11 @@
                 <label>Password</label>
                 {{ form.password }}
             </div>
-            <button class="submit-btn">Submit</button>
+            <button class="submit-btn">Login</button>
+        </form>
+        
+        <form action="{% url 'register_view' %}" class="login-form">
+            <button class="submit-btn">New user? Register now!</button>
         </form>
     </div>
 </body>

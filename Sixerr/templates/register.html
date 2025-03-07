@@ -51,13 +51,11 @@
 
                 <div class="input-row">
                     <div class="input-group">
-                        <label>Role</label>
+                        <label>Role:</label>
                         <select name="role" id="id_role" class="dropdown">
-                            <!-- {{ form.role }} -->
-                            <!-- <option selected>Client</option> -->
-                            <option>Client</option>
-                            <option>Admin</option>
-                            <option>Mentor</option>
+                            {% for value, label in form.role.field.choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="input-group">
@@ -69,8 +67,12 @@
                 <button type="submit" class="submit-btn">Sign In</button>
             </form>
 
+            <form action="{% url 'login_view' %}" class="register-form">
+                <button class="submit-btn">Already have an account? Login now!</button>
+            </form>
+
             {% if msg %}
-                <p class="error-msg">Please recheck your registration details</p>
+                <p class="error-msg">{{ msg }}</p>
             {% endif %}
         </div>
     </div>

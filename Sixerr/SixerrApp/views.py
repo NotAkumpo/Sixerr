@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
 from .forms import *
 
 # Create your views here.
@@ -13,7 +14,15 @@ def register_view(request):
             user = form.save()
             return redirect('login_view')
         else:
-            msg = 'Please recheck your registration details'
+            username = form.data['username']
+            password = form.data['password1']
+            msg = 'An error has occured.'
+            if User.objects.filter(username=username).exists():
+                msg = 'An account already exists with this username.' 
+            try: 
+                validate_password(password)
+            except forms.ValidationError as e:
+                msg = e
     else:
         form = RegistrationForm()
     
@@ -22,6 +31,7 @@ def register_view(request):
 def login_view(request):
     form = LoginForm(request.POST or None)
     msg = None
+    
     if request.method == 'POST':
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -30,10 +40,13 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 return redirect('home')
+            elif User.objects.filter(username=username).exists():
+                msg = 'Invalid password.'
             else:
-                msg = 'Invalid login'
+                msg = 'Account with this username does not exist.'
+
         else:
-            msg = 'Error validating the form'
+            msg = 'An error has occured.'
     return render(request,'login.html', {'form': form, 'msg': msg})
 
 def logout_view(request):
