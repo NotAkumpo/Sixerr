@@ -3,11 +3,23 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
+class Skill(models.Model):
+    skill_name = models.CharField(
+        primary_key=True,
+        unique=True,
+        null=False, 
+        max_length=20
+        )
+    
+    image = models.ImageField(upload_to='images/', null=False, blank=False, default='images/default.jpg')
+    
+    def __str__(self):
+           return self.skill_name
+
 class User(AbstractUser):
     class Role(models.TextChoices):
-        ADMIN = 'admin'
-        CLIENT = 'client'
         MENTOR = 'mentor'
+        CLIENT = 'client'
 
     default_role = Role.CLIENT
 
@@ -19,4 +31,5 @@ class User(AbstractUser):
 
     first_name = models.CharField(null=False, max_length=255, default='John')
     last_name = models.CharField(null=False, max_length=255, default='Smith')
-    skill = models.CharField(null=True, blank=True, max_length=255)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=True, blank=True, related_name='users')
+

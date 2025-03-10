@@ -15,4 +15,10 @@
             {% csrf_token %}
             <button type="submit" class="submit-btn">Logout</button>
         </form>
+
+        {% for s in skills %}
+            <p>{{ s.skill_name }}</p>
+            <img src="{{ s.image.url }}" style="width:100px; height:100px;">
+        {% endfor %}
+
     </body>

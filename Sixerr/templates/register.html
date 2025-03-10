@@ -60,11 +60,15 @@
                     </div>
                     <div class="input-group">
                         <label>Skill</label>
-                        {{ form.skill }}
+                        <select name="skill" id="id_skill" class="dropdown">
+                            {% for skill in skills %}
+                                <option value="{{ skill }}">{{ skill|capfirst }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">Sign In</button>
+                <button type="submit" class="submit-btn">Sign Up</button>
             </form>
 
             <form action="{% url 'login_view' %}" class="register-form">
@@ -76,5 +80,24 @@
             {% endif %}
         </div>
     </div>
+
+
+    <script>
+
+        const roleSelect = document.getElementById('id_role');
+        const skillInput = document.getElementById('id_skill');
+
+
+        roleSelect.addEventListener('change', function() {
+            if (this.value === 'client' || this.value === 'admin') {
+                skillInput.value = ''; // Clear the skill input
+                skillInput.disabled = true; // Optional: Disable the field so it can’t be edited
+            } else {
+                skillInput.disabled = false;
+            }
+        });
+
+    </script>
+
 </body>
 </html>

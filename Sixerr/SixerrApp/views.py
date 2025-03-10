@@ -3,11 +3,13 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from .forms import *
+from .models import *
 
 # Create your views here.
 
 def register_view(request):
     msg = None
+    skills = Skill.objects.all()
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -26,7 +28,7 @@ def register_view(request):
     else:
         form = RegistrationForm()
     
-    return render(request,'register.html', {'form': form, 'msg': msg})
+    return render(request,'register.html', {'form': form, 'msg': msg, 'skills': skills})
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -54,4 +56,18 @@ def logout_view(request):
     return redirect('login_view')
 
 def home(request):
-    return render(request, 'home.html')
+    skills = Skill.objects.all()
+
+    return render(request, 'home.html', {'skills': skills})
+
+def skill_view(request):
+    if request.method == 'POST':
+        form = SkillForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            return redirect('login_view')
+    else:
+        form = SkillForm()
+    return render(request, 'skills.html', {'form': form})
+
