@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
@@ -11,7 +12,9 @@ class Skill(models.Model):
         max_length=20
         )
     
-    image = models.ImageField(upload_to='images/', null=False, blank=False, default='images/default.jpg')
+    image = models.ImageField(upload_to='images/skills/', null=False, blank=False, default='images/skills/default.jpg')
+
+    popularity = models.IntegerField(default=0)
     
     def __str__(self):
            return self.skill_name
@@ -23,6 +26,8 @@ class User(AbstractUser):
 
     default_role = Role.CLIENT
 
+    image = models.ImageField(upload_to='images/users/', null=False, blank=False, default='images/users/default.jpg')
+
     role = models.CharField(
         max_length=10,
         choices=Role.choices,
@@ -32,4 +37,8 @@ class User(AbstractUser):
     first_name = models.CharField(null=False, max_length=255, default='John')
     last_name = models.CharField(null=False, max_length=255, default='Smith')
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=True, blank=True, related_name='users')
+    dummy = models.BooleanField(default=False)
+    popularity = models.IntegerField(default=0)
+    rating = models.FloatField(default=0.0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    hourly_rate = models.FloatField(default=0.0, validators=[MinValueValidator(0.0)])
 

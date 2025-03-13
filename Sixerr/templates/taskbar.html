@@ -1,0 +1,29 @@
+<html lang="en">
+    <body>
+        <table width="100%" height="40px" border="1">
+
+            <td width="16%" align="center"><b><a href="{% url 'home' %}">
+                List of Skills</a></b></td>
+    
+            <td width="16%" align="center"><b><a href="{% url 'home' %}">
+            Chats</a></b></td>
+    
+            <td width="16%" align="center"><b><a href="{% url 'profile' request.user.username %}">
+            Profile</a></b></td>
+    
+            <td width="16%" align="center"><b><a href="{% url 'home' %}">
+            Schedule</a></b></td>
+    
+            <td width="16%" align="center"><b><a href="{% url 'logout_view' %}">
+            Logout</a></b></td>
+    
+        </table>
+
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+        {% block scripts %}{% endblock %}
+
+
+    </body>
+</html>
