@@ -1,0 +1,24 @@
+<!doctype html>
+{% extends 'taskbar.html' %}
+{% load static %}
+<html lang="en">
+{% block content %}
+
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+
+    <body>
+        {{ skill }}
+        <img src="{{ skill.image.url }}" style="width:100px; height:100px;">
+
+        <ul>
+            {% for mentor in mentors %}
+                <li>{{ mentor.first_name }} {{ mentor.last_name }}</li>
+            {% endfor %}
+        </ul>
+    
+    </body>
+
+{% endblock %}
