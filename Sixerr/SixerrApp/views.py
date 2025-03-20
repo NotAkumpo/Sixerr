@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from .forms import *
 from .models import *
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
@@ -91,21 +91,65 @@ def skill_add_view(request):
 
 class MentorListView(LoginRequiredMixin, TemplateView):
     template_name = 'mentor_list.html'
-
     login_url = reverse_lazy('login_view')
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.role != 'client':
             return redirect('mentor_home')
+
+        skill_search = request.GET.get('skill_search', '').strip()
+        if skill_search:
+            skill = Skill.objects.filter(skill_name__icontains=skill_search).first()
+            if skill:
+                return redirect(reverse('mentor_list', kwargs={'skill_name': skill.skill_name}))
+            else:
+                # Redirect to a page that shows "No skills found"
+                return redirect(reverse('mentor_list', kwargs={'skill_name': 'default'}))
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        skill_name = self.kwargs.get('skill_name')
-        context['skill'] = Skill.objects.get(skill_name=skill_name)
-        context['mentors'] = User.objects.filter(skill__skill_name=skill_name, role='mentor')
-        return context
 
+        skill_name = self.kwargs.get('skill_name')
+        if not skill_name or skill_name == "default":
+            context['no_results_message'] = "No mentors available."
+            context['mentors'] = User.objects.filter(role='mentor').order_by('-popularity')[:10]
+            return context
+
+        try:
+            skill = Skill.objects.get(skill_name=skill_name)
+        except Skill.DoesNotExist:
+            context['no_results_message'] = "No mentors available."
+            context['mentors'] = User.objects.filter(role='mentor').order_by('-popularity')[:10]
+            return context
+
+        context['skill'] = skill
+
+        # Filtering
+        mentors = User.objects.filter(skill__skill_name=skill_name, role='mentor')
+
+        popularity = self.request.GET.get('popularity', None)
+        popularity_operator = self.request.GET.get('popularity_operator', 'gt')
+        rating = self.request.GET.get('rating', None)
+        rating_operator = self.request.GET.get('rating_operator', 'gt')
+        hourly_rate = self.request.GET.get('hourly_rate', None)
+        hourly_rate_operator = self.request.GET.get('hourly_rate_operator', 'lt')
+
+        if popularity:
+            mentors = mentors.filter(popularity__gt=popularity) if popularity_operator == 'gt' else mentors.filter(popularity__lt=popularity)
+        if rating:
+            mentors = mentors.filter(rating__gt=rating) if rating_operator == 'gt' else mentors.filter(rating__lt=rating)
+        if hourly_rate:
+            mentors = mentors.filter(hourly_rate__gt=hourly_rate) if hourly_rate_operator == 'gt' else mentors.filter(hourly_rate__lt=hourly_rate)
+
+        if mentors.exists():
+            context['mentors'] = mentors.order_by('-popularity')[:10]
+        else:
+            context['no_results_message'] = "There are no mentors with that criteria."
+            context['mentors'] = []
+
+        return context
 
 class MentorHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'mentor_home.html'
