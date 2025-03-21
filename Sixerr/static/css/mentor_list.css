@@ -1,0 +1,229 @@
+@font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+h1 {
+    color: #1d2b8a;
+    margin-top: 5%;
+    margin-bottom: auto;
+    text-align: center;
+    font-size: 70px;
+    font-family: 'GI';
+}
+
+body h2, .my-heading {
+    color: #acaaaa;
+    margin-top: 5%;
+    margin-bottom: auto;
+    margin-left: 5%;
+    font-size: 22px !important;    /* Force font size */
+    font-family: 'GI';
+    text-align: left;
+    font-weight: normal;
+}
+
+.mentor-count {
+    color: #acaaaa;
+    font-size: 18px !important;
+    margin-left: 60%;  /* Adjust the spacing as needed */
+    font-family: 'GI';
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 5%;
+    margin-bottom: auto;
+
+}
+
+.search-container {
+    display:flex;
+    align-items: center;
+    background-color: #eee;
+    border-radius: 30px;
+    padding: 8px 15px;
+    width: 380px;
+    height: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3%;
+}
+
+.search-input {
+    font-family: 'GI';
+    font-size: 18px;
+    color: #777;
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.searchlogo {
+    width: 15px;
+    height: 15px;
+}
+
+.search-button {
+    display: flex;   
+    justify-content: center;
+    align-items: center;
+    width: 30px;          
+    height: 30px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+
+.search-input::placeholder {
+    color: #bbb;
+    font-family: 'GI';
+}
+
+div {
+    color: #1d2b8a;
+    font-weight: normal;
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+    font-size: 35px;
+    font-family: 'GI';
+}
+
+.fulllogo {
+    width: 250px;
+    height: 60px;
+    margin-top: 5%;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.filter-label {
+    font-size: 14px;
+    color: #1d2b8a;
+    margin-right: 4px;
+}
+
+.filter-box {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 0 2px;
+}
+
+
+.filter-divider {
+    height: 24px;
+    width: 1px;
+    background-color: #1d2b8a;
+    margin: 0 8px;
+}
+
+.filter-operator, .filter-input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    text-align: center;
+    width: 40px;
+    color: #555;
+}
+
+
+.filter-btn {
+    background-color: transparent;
+    border: none;
+    margin-left: 1px;
+    cursor: pointer;
+}
+
+.filter-icon {
+    width: 32px;
+    height: 27px;
+}
+
+.mentor-list {
+    margin: 20px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #2c3e50;
+    margin: 10px 0;
+}
+
+.mentor-divider {
+    border: none;
+    border-top: 1px solid #1d2b8a;
+    margin: 25px 0 16px 0;
+    width: 100%;
+}
+
+.mentor-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.mentor-card {
+    width: 250px; 
+    min-width: 250px;
+    max-width: 250px;
+    margin: 10px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+
+
+.mentor-card:hover {
+    transform: scale(1.05);
+}
+
+.mentor-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 8px;
+}
+
+.mentor-info h4 {
+    margin: 5px 0;
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 25px;
+}
+
+.mentor-info p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #666;
+}

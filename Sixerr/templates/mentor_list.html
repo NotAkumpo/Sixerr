@@ -7,54 +7,78 @@
     <head>
         <meta charset="utf-8">
         <title>Mentor List</title>
+        <link rel="stylesheet" href="{% static 'css/mentor_list.css' %}?v=.0">
     </head>
 
     <body>
-        <!--- Search bar to filter mentors by name within the selected skill --->
-        <form method="get">
-            <input type="text" name="mentor_search" placeholder="Search for a mentor..." value="{{ request.GET.mentor_search }}">
-            <button type="submit">Search</button>
-        </form>
-    
-        <hr>
-
-        {% if skill %}
-            <h2>{{ skill }}</h2>
-            <img src="{{ skill.image.url }}" style="width:100px; height:100px;">
-        {% endif %}
+        <form method="get" class="search-container">
+            <input type="text" class="search-input" name="mentor_search" placeholder="Search a Mentor" value="{{ request.GET.mentor_search }}">
+            <button type="submit" class="search-button">
+                <img src="{% static 'search-icon.png' %}" alt="Search" class="searchlogo">
+            </button>
+        </form>        
 
 
         <!--- Filter --->
         <form method="get" action="{% if skill and skill.skill_name %}{% url 'mentor_list' skill_name=skill.skill_name %}{% else %}{% url 'mentor_list' skill_name='default' %}{% endif %}">
             <input type="hidden" name="skill_name" value="{{ skill.skill_name|default_if_none:'' }}">
         
-            <label for="popularity">Popularity </label>
-            <select name="popularity_operator">
-                <option value="gt">></option>
-                <option value="lt"><</option>
-            </select>
-            <input type="number" name="popularity" step="1" min="0">
+            <div class="filter-row">
+                <div class="filter-label">Popularity</div>
+                <div class="filter-box">
+                    <select name="popularity_operator" class="filter-operator">
+                        <option value="gt">></option>
+                        <option value="lt"><</option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <input type="number" name="popularity" step="1" min="0" class="filter-input">
+                </div>
         
-            <label for="rating">Rating </label>
-            <select name="rating_operator">
-                <option value="gt">></option>
-                <option value="lt"><</option>
-            </select>
-            <input type="number" name="rating" step="0.1" min="0" max="5">
+                <div class="filter-divider"></div>
+    
+                <div class="filter-label">Rating</div>
+                <div class="filter-box">
+                    <select name="rating_operator" class="filter-operator">
+                        <option value="gt">></option>
+                        <option value="lt"><</option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <input type="number" name="rating" step="0.1" min="0" max="5" class="filter-input">
+                </div>
         
-            <label for="hourly_rate">Hourly Rate </label>
-            <select name="hourly_rate_operator">
-                <option value="lt"><</option>
-                <option value="gt">></option>
-            </select>
-            <input type="number" name="hourly_rate" step="0.01" min="0">
+                <div class="filter-divider"></div>
         
-            <button type="submit">Filter</button>
+                <div class="filter-label">Rates</div>
+                <div class="filter-box">
+                    <select name="hourly_rate_operator" class="filter-operator">
+                        <option value="lt"><</option>
+                        <option value="gt">></option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <input type="number" name="hourly_rate" step="0.01" min="0" class="filter-input">
+                </div>
+        
+                <button type="submit" class="filter-btn">
+                    <img src="{% static 'filter-icon.png' %}" alt="Filter" class="filter-icon">
+                </button>
+            </div>
         </form>
+        
 
-
-
-        <ul>
+        <div style="display: flex; align-items: center;">
+            {% if skill %}
+                <h2>Search results for "{{ skill }}"</h2>
+                <!-- <img src="{{ skill.image.url }}" style="width:100px; height:100px;"> -->
+            {% endif %}
+            <p class="mentor-count">{{ mentors|length }} mentors found</p>
+        </div>
+        <hr class="mentor-divider">
+        
+        
+        <!-- <ul>
             {% if mentors %}
                 {% for mentor in mentors %}
                     <li>{{ mentor.first_name }} {{ mentor.last_name }} - Popularity: {{ mentor.popularity }}, Rating: {{ mentor.rating }}, Hourly Rate: {{ mentor.hourly_rate }}</li>
@@ -62,7 +86,25 @@
             {% else %}
                 <li>{{ no_results_message }}</li>
             {% endif %}
-        </ul>
+        </ul> -->
+
+        <div class="mentor-grid">
+            {% if mentors %}
+                {% for mentor in mentors %}
+                    <div class="mentor-card">
+                        <img src="{{ mentor.image.url }}" alt="{{ mentor.first_name }}" class="mentor-img">
+                        <div class="mentor-info">
+                            <h4>{{ mentor.first_name }} {{ mentor.last_name }}</h4>
+                            <p>Popularity: {{ mentor.popularity }}</p>
+                            <p>Rating: {{ mentor.rating }}</p>
+                            <p>Rates: ${{ mentor.hourly_rate }}/hr</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>{{ no_results_message }}</p>
+            {% endif %}
+        </div>
     
     </body>
 
