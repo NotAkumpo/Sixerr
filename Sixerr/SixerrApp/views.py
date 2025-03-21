@@ -96,23 +96,13 @@ class MentorListView(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.role != 'client':
             return redirect('mentor_home')
-
-        skill_search = request.GET.get('skill_search', '').strip()
-        if skill_search:
-            skill = Skill.objects.filter(skill_name__icontains=skill_search).first()
-            if skill:
-                return redirect(reverse('mentor_list', kwargs={'skill_name': skill.skill_name}))
-            else:
-                # Redirect to a page that shows "No skills found"
-                return redirect(reverse('mentor_list', kwargs={'skill_name': 'default'}))
-
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         skill_name = self.kwargs.get('skill_name')
-        if not skill_name or skill_name == "default":
+        if not skill_name:
             context['no_results_message'] = "No mentors available."
             context['mentors'] = User.objects.filter(role='mentor').order_by('-popularity')[:10]
             return context
@@ -126,9 +116,15 @@ class MentorListView(LoginRequiredMixin, TemplateView):
 
         context['skill'] = skill
 
-        # Filtering
+        # Get all mentors for the selected skill
         mentors = User.objects.filter(skill__skill_name=skill_name, role='mentor')
 
+        # Filter by mentor name IF provided
+        mentor_search = self.request.GET.get('mentor_search', '').strip()
+        if mentor_search:
+            mentors = mentors.filter(first_name__icontains=mentor_search) | mentors.filter(last_name__icontains=mentor_search)
+
+        # Filtering 
         popularity = self.request.GET.get('popularity', None)
         popularity_operator = self.request.GET.get('popularity_operator', 'gt')
         rating = self.request.GET.get('rating', None)
@@ -143,11 +139,14 @@ class MentorListView(LoginRequiredMixin, TemplateView):
         if hourly_rate:
             mentors = mentors.filter(hourly_rate__gt=hourly_rate) if hourly_rate_operator == 'gt' else mentors.filter(hourly_rate__lt=hourly_rate)
 
-        if mentors.exists():
-            context['mentors'] = mentors.order_by('-popularity')[:10]
+        # If filtered, show all mentors sorted by popularity
+        if any([mentor_search, popularity, rating, hourly_rate]):
+            context['mentors'] = mentors.order_by('-popularity')  # Show all mentors
         else:
+            context['mentors'] = mentors.order_by('-popularity')[:10]  # Show only top 10 if no filters
+
+        if not context['mentors']:
             context['no_results_message'] = "There are no mentors with that criteria."
-            context['mentors'] = []
 
         return context
 

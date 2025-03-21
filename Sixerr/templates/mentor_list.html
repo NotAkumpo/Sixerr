@@ -10,9 +10,9 @@
     </head>
 
     <body>
-        <!--- Search bar, if skill search empty, redirects to default. If not empty, redirect to skills page ---> 
-        <form method="get" action="{% if skill_search %}{% url 'mentor_list' skill_name=skill_search %}{% else %}{% url 'mentor_list' skill_name='default' %}{% endif %}">
-            <input type="text" name="skill_search" placeholder="Search for a skill..." value="{{ skill_search }}">
+        <!--- Search bar to filter mentors by name within the selected skill --->
+        <form method="get">
+            <input type="text" name="mentor_search" placeholder="Search for a mentor..." value="{{ request.GET.mentor_search }}">
             <button type="submit">Search</button>
         </form>
     
