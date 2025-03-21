@@ -75,7 +75,15 @@ class HomeView(LoginRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['skills'] = Skill.objects.all()  
+        skills = Skill.objects.all()
+    
+        skill_search = self.request.GET.get('skill_search', '').strip()
+        if skill_search:
+            skills = skills.filter(skill_name__icontains=skill_search)
+            context['skills'] = skills.order_by('-popularity')
+        else:
+            context['skills'] = skills.order_by('-popularity')[:10]
+
         return context
 
 def skill_add_view(request):

@@ -15,12 +15,15 @@
         <!-- <h1>Sixerr.</h1> -->
         <img src="{% static 'fullLogoWhite3.png' %}" alt="logo" class="fulllogo">
 
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search a Skill">
-            <button class="search-button">
-                <img src="{% static 'search-icon.png' %}" alt="Search" class="searchlogo">
-            </button>
-        </div>
+        <form method="get">
+            <div class="search-container">
+                <input type="text" class="search-input" name="skill_search" placeholder="Search a Skill" value="{{ request.GET.skill_search }}">
+                <button class="search-button">
+                    <img src="{% static 'search-icon.png' %}" alt="Search" class="searchlogo">
+                </button>
+            </div>
+        </form>
+        
         <h2 class="my-heading">Popular Skills</h2>
         
         <div class="slide-container">
