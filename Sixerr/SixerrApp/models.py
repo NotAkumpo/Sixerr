@@ -41,4 +41,22 @@ class User(AbstractUser):
     popularity = models.IntegerField(default=0)
     rating = models.FloatField(default=0.0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     hourly_rate = models.FloatField(default=0.0, validators=[MinValueValidator(0.0)])
+    join_date = models.DateField(auto_now_add=True, null=False, blank=False)
+    bio = models.TextField(null=False, blank=False, default='I love Sixerr!')
 
+class Booking(models.Model):
+    booking_id = models.CharField(
+        primary_key=True,
+        unique=True,
+        null=False, 
+        max_length=20
+        )
+    
+    client = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, related_name='client_bookings')
+    mentor = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, related_name='mentor_bookings')
+
+    date = models.DateField(null=False, blank=False)
+    start_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0), MaxValueValidator(23)])
+    end_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0), MaxValueValidator(23)])
+    price = models.FloatField(null=False, blank=False, default=0.0, validators=[MinValueValidator(0.0)])
+    modality = models.CharField(null=False, blank=False, max_length=20, default='onsite')

@@ -39,3 +39,8 @@ class SkillForm(forms.ModelForm):
     class Meta:
         model = Skill
         fields = ['skill_name', 'image']
+
+class EditBioForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['bio']

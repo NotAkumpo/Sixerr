@@ -8,6 +8,8 @@ from .forms import *
 from .models import *
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.edit import UpdateView
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 
@@ -178,3 +180,41 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         username = self.kwargs.get('username')
         context['user'] = User.objects.get(username=username)
         return context
+    
+class MentorProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'mentor_profile.html'
+
+    login_url = reverse_lazy('login_view')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        context['mentor'] = User.objects.get(username=username)
+        return context
+    
+class BookingView(LoginRequiredMixin, TemplateView):
+    template_name = 'booking.html'
+
+    login_url = reverse_lazy('login_view')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        context['mentor'] = User.objects.get(username=username)
+        context['user'] = self.request.user
+        return context
+    
+class EditBioView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = EditBioForm
+    template_name = 'edit_bio.html'
+    login_url = reverse_lazy('login_view')
+    
+    def get_object(self, queryset=None):
+        user = User.objects.get(username=self.kwargs['username'])
+        if user != self.request.user:
+            raise PermissionDenied
+        return user
+    
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})

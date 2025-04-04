@@ -91,6 +91,7 @@
         <div class="mentor-grid">
             {% if mentors %}
                 {% for mentor in mentors %}
+                    <a href="{% url 'mentor_profile' mentor.username %}">
                     <div class="mentor-card">
                         <img src="{{ mentor.image.url }}" alt="{{ mentor.first_name }}" class="mentor-img">
                         <div class="mentor-info">
@@ -100,6 +101,7 @@
                             <p>Rates: ${{ mentor.hourly_rate }}/hr</p>
                         </div>
                     </div>
+                    </a>
                 {% endfor %}
             {% else %}
                 <p>{{ no_results_message }}</p>

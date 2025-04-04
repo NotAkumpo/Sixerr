@@ -13,5 +13,7 @@ urlpatterns = [
     path('mentor_list/<str:skill_name>', MentorListView.as_view(), name='mentor_list'),
     path('mentor_home', MentorHomeView.as_view(), name='mentor_home'),
     path('profile/<username>', ProfileView.as_view(), name='profile'),
-    
+    path('mentor_profile/<username>', MentorProfileView.as_view(), name='mentor_profile'),
+    path('booking/<username>', BookingView.as_view(), name='booking'),
+    path('edit_bio/<username>', EditBioView.as_view(), name='edit_bio'),
 ]
