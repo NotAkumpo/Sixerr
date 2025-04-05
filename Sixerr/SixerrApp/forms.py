@@ -47,7 +47,7 @@ class EditBioForm(forms.ModelForm):
 
 class BookingForm(forms.ModelForm):
     date = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'id': 'date'}),
         input_formats=['%Y-%m-%d'],
     )
     start_time = forms.IntegerField(

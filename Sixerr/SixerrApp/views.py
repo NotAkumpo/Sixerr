@@ -212,7 +212,8 @@ class BookingView(LoginRequiredMixin, TemplateView):
             booking.save()
             return redirect('home')
         
-        context = self.get_context_data(form)
+        context = self.get_context_data(**kwargs)
+        context['form'] = form
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
@@ -221,6 +222,7 @@ class BookingView(LoginRequiredMixin, TemplateView):
         context['mentor'] = User.objects.get(username=username)
         context['user'] = self.request.user
         context['booking'] = Booking.objects.filter(mentor=context['mentor'])
+        
         context['form'] = BookingForm() or kwargs.get('form')
         return context
     

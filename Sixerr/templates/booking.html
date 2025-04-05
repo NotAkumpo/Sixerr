@@ -13,7 +13,13 @@
     <button type="submit">Book Session</button>
 </form>
 
+{% for b in booking %}
+    <p>Booked Session: {{ b.start_time }} to {{ b.end_time }} on {{ b.date }}</p>
+{% endfor %}
+
 <script>
+    const dateInput = document.getElementById('date');
+
     function filterEndtime(){
         var startTime = parseInt(document.getElementById('start-time').value);
         var endTime = parseInt(document.getElementById('end-time').value);
@@ -36,6 +42,12 @@
         }
     }
 
+    function returnDate(){
+        var selectedDate = dateInput.value;
+        console.log("Selected date: " + selectedDate);
+        console.log(unavailable_times);
+    }
 
     document.getElementById('start-time').addEventListener('change', filterEndtime);
+    dateInput.addEventListener('change', returnDate);
 </script>
