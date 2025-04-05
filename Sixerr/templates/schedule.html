@@ -1,0 +1,19 @@
+<h1>Booked Sessions</h1>
+
+{% if bookings %}
+    <ul>
+        {% for booking in bookings %}
+            <li>
+                <p><strong>Date:</strong> {{ booking.date }}</p>
+                <p><strong>Skill:</strong> {{ booking.mentor.skill }}</p>
+                <p><strong>Mentor:</strong> {{ booking.mentor.first_name }} {{ booking.mentor.last_name }}</p>
+                <p><strong>Client:</strong> {{ booking.client.first_name }} {{ booking.client.last_name }}</p>
+                <p><strong>Time:</strong> {{ booking.start_time }} to {{ booking.end_time }}</p>
+                <p><strong>Modality:</strong> {{ booking.modality }}</p>
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No booked sessions.</p>
+{% endif %}

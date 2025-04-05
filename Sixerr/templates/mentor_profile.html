@@ -4,6 +4,7 @@
 <p>Role: {{ mentor.role }}</p>
 <p>Skill Taught: {{ mentor.skill }}</p>
 <p>Join Date: {{ mentor.join_date }}</p>
+<p>Hourly Rate: ${{ mentor.hourly_rate }}</p>
 <p>Rating: {{ mentor.rating }}/5</p>
 <p>Bio: {{ mentor.bio }}</p>
 {% if request.user.role == 'client' %}

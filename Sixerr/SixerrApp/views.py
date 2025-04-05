@@ -10,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import UpdateView
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 
 # Create your views here.
 
@@ -197,11 +198,30 @@ class BookingView(LoginRequiredMixin, TemplateView):
 
     login_url = reverse_lazy('login_view')
 
+    def post(self, request, *args, **kwargs):
+        form = BookingForm(request.POST)
+        username = self.kwargs.get('username')
+        mentor = User.objects.get(username=username)
+
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.client = request.user
+            booking.mentor = mentor
+            booking.booking_id = str(booking.client.username) + str(booking.mentor.username) + str(Booking.objects.count())
+            booking.price = mentor.hourly_rate * (booking.end_time - booking.start_time)
+            booking.save()
+            return redirect('home')
+        
+        context = self.get_context_data(form)
+        return self.render_to_response(context)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get('username')
         context['mentor'] = User.objects.get(username=username)
         context['user'] = self.request.user
+        context['booking'] = Booking.objects.filter(mentor=context['mentor'])
+        context['form'] = BookingForm() or kwargs.get('form')
         return context
     
 class EditBioView(LoginRequiredMixin, UpdateView):
@@ -218,3 +238,19 @@ class EditBioView(LoginRequiredMixin, UpdateView):
     
     def get_success_url(self):
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
+    
+class ScheduleView(LoginRequiredMixin, TemplateView):
+    template_name = 'schedule.html'
+
+    login_url = reverse_lazy('login_view')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        bookings = Booking.objects.filter(Q(client=self.request.user) | Q(mentor=self.request.user)).order_by('date', 'start_time')
+
+        for booking in bookings:
+            booking.start_time = f"{(booking.start_time % 12) + 1}:00 {'AM' if booking.start_time < 12 else 'PM'}"
+            booking.end_time = f"{(booking.end_time % 12) + 1}:00 {'AM' if booking.end_time < 12 else 'PM'}"
+
+        context['bookings'] = bookings
+        return context

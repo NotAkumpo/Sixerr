@@ -1,2 +1,41 @@
+<h1>Available Sessions and Booking</h1>
 <p>User: {{ user.first_name }} {{ user.last_name }}</p>
 <p>Mentor: {{ mentor.first_name }} {{ mentor.last_name }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <p>Date of Session: {{ form.date }}</p>
+    <p>Modality: {{ form.modality }}</p>
+    <p>Time: {{ form.start_time }} to {{ form.end_time }}</p> 
+    <!-- <p>Total Price for Sessions: ${{ booking.price }}</p> -->
+
+    <button type="submit">Book Session</button>
+</form>
+
+<script>
+    function filterEndtime(){
+        var startTime = parseInt(document.getElementById('start-time').value);
+        var endTime = parseInt(document.getElementById('end-time').value);
+        var endTimeSelect = document.getElementById('end-time');
+
+        while (endTimeSelect.options.length) {
+            endTimeSelect.remove(0);
+        }
+        
+        for (var i = startTime + 2; i <= 24; i++) {
+            var option = document.createElement('option');
+            var formattedTime = (i % 12 === 0 ? 12 : i % 12) + ":00 " + (i < 12 ? "AM" : "PM");
+            option.value = i;
+            option.text = formattedTime;
+            endTimeSelect.add(option);
+        }
+
+        if (endTime > startTime){
+            endTimeSelect.value = endTime;
+        }
+    }
+
+
+    document.getElementById('start-time').addEventListener('change', filterEndtime);
+</script>

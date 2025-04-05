@@ -8,7 +8,7 @@
 -- For user database
 -- Query: SELECT username, first_name, last_name, role, skill_id, popularity, rating, hourly_rate, image, email, dummy FROM sixerrapp_user;
 -- Delete: DELETE FROM sixerrapp_user WHERE;
--- Insert: INSERT INTO sixerrapp_user (first_name, last_name, username, email, password, role, skill_id, is_superuser, is_staff, is_active, date_joined, image, dummy, popularity, rating, hourly_rate) VALUES ('Chris', 'Paul', 'cp3', 'cp3@gmail.com', 'ThisIsMyPassword', 'mentor', 'pickleball', 0, 0, 1, '2025-03-10', 'images/users/chris.jpg', 1, 1, 4.5, 20.50);
+-- Insert: INSERT INTO sixerrapp_user (first_name, last_name, username, email, password, role, skill_id, is_superuser, is_staff, is_active, date_joined, image, dummy, popularity, rating, hourly_rate, bio, ) VALUES ('Chris', 'Paul', 'cp3', 'cp3@gmail.com', 'ThisIsMyPassword', 'mentor', 'pickleball', 0, 0, 1, '2025-03-10', 'images/users/chris.jpg', 1, 1, 4.5, 20.50);
 
 -- Just some random data for skill
 INSERT INTO sixerrapp_skill (skill_name, image, popularity) VALUES ('basketball', 'images/skills/basketball.jpeg', 1);
