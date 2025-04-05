@@ -41,7 +41,6 @@ class User(AbstractUser):
     popularity = models.IntegerField(default=0)
     rating = models.FloatField(default=0.0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     hourly_rate = models.FloatField(default=0.0, validators=[MinValueValidator(0.0)])
-    join_date = models.DateField(auto_now_add=True, null=False, blank=False)
     bio = models.TextField(null=False, blank=False, default='I love Sixerr!')
 
 class Booking(models.Model):

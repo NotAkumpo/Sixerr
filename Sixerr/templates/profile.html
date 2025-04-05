@@ -2,7 +2,7 @@
 <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
 <p>Email: {{ user.email }}</p>
 <p>Join : {{ user.role }}</p>
-<p>Join Date: {{ user.join_date}}</p>
+<p>Join Date: {{ user.date_joined}}</p>
 <p>Bio: {{ user.bio }}</p>
 {% if request.user.username == user.username %}
     <a href="{% url 'edit_bio' user.username %}">Edit Bio</a>
