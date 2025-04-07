@@ -10,44 +10,168 @@
     <p>Time: {{ form.start_time }} to {{ form.end_time }}</p> 
     <!-- <p>Total Price for Sessions: ${{ booking.price }}</p> -->
 
-    <button type="submit">Book Session</button>
+    <button type="submit" class="submit-button">Book Session</button>
 </form>
+<button class="change-button">Pick a Different Time</button>
 
 {% for b in booking %}
     <p>Booked Session: {{ b.start_time }} to {{ b.end_time }} on {{ b.date }}</p>
 {% endfor %}
 
+
+<div class="booking-for-day">
+
+</div>
+
 <script>
     const dateInput = document.getElementById('date');
+    const bookings = JSON.parse('{{ bookings|safe }}');
+    const endTimeSelect = document.getElementById('end-time');
+    const startTimeSelect = document.getElementById('start-time');
+    const changeButton = document.querySelector('.change-button');
+    let day_bookings = [];
+    let packed_day = null;
+    let startTimes = [];
+    let endTimes = [];
+
+    // endTimeSelect.style.pointerEvents = 'none';
+    // endTimeSelect.style.backgroundColor = 'gray';
+    // startTimeSelect.style.pointerEvents = 'none';
+    // startTimeSelect.style.backgroundColor = 'gray';
+    // filterEndtime();
+
+    function formatStartTime(i){
+        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 0 ) ? "AM" : "PM")
+    }
+
+    function formatEndTime(i){
+        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 24 ) ? "AM" : "PM") + (i === 24 ? " ND" : "")
+    }
+
+    function filterStarttime(){
+        startTimeSelect.style.pointerEvents = 'auto';
+        startTimeSelect.style.backgroundColor = '';
+
+        while (startTimeSelect.options.length) {
+            startTimeSelect.remove(0);
+        }
+
+        for (let i = 0; i <= 24; i++) {
+            if (bookedTimes.includes(i)){
+                continue;
+            }
+            const option = document.createElement('option');
+            const formattedTime = formatStartTime(i);
+            option.value = i;
+            option.text = formattedTime;
+            startTimeSelect.add(option);
+        }
+
+        const defopt = document.createElement('option');
+        defopt.value = '';
+        defopt.text = "Select Start Time";
+        startTimeSelect.add(defopt);
+        startTimeSelect.value = '';
+    }
 
     function filterEndtime(){
-        var startTime = parseInt(document.getElementById('start-time').value);
-        var endTime = parseInt(document.getElementById('end-time').value);
-        var endTimeSelect = document.getElementById('end-time');
+        const startTime = parseInt(document.getElementById('start-time').value);
+        const endTime = parseInt(document.getElementById('end-time').value);
+        endTimeSelect.style.pointerEvents = 'auto';
+        endTimeSelect.style.backgroundColor = '';
+        startTimeSelect.style.pointerEvents = 'none';
+        startTimeSelect.style.backgroundColor = 'gray';
+        var endTimeLimit = 24;
 
         while (endTimeSelect.options.length) {
             endTimeSelect.remove(0);
         }
+
+        for (let i = startTime; i <= 23; i++){
+            if (startTimes.includes(i)){
+                endTimeLimit = i;
+                break;
+            }
+        }
         
-        for (var i = startTime + 2; i <= 24; i++) {
-            var option = document.createElement('option');
-            var formattedTime = (i % 12 === 0 ? 12 : i % 12) + ":00 " + (i < 12 ? "AM" : "PM");
-            option.value = i;
-            option.text = formattedTime;
-            endTimeSelect.add(option);
+        for (let i = startTime + 1; i <= 24; i++) {
+            if (i <= endTimeLimit) {
+                const option = document.createElement('option');
+                const formattedTime = formatEndTime(i);
+                option.value = i;
+                option.text = formattedTime;
+                endTimeSelect.add(option);
+            }
         }
 
         if (endTime > startTime){
             endTimeSelect.value = endTime;
         }
+        else {
+            const defopt = document.createElement('option');
+            defopt.value = '';
+            defopt.text = "Select End Time";
+            defopt.disabled = true;
+            endTimeSelect.value = '';
+        }
+        // console.log(bookings);
+    }
+
+    function clearTime(){
+        endTimeSelect.style.pointerEvents = 'none';
+        endTimeSelect.style.backgroundColor = 'gray';
+        endTimeSelect.value = '';
+        filterStarttime();
     }
 
     function returnDate(){
-        var selectedDate = dateInput.value;
-        console.log("Selected date: " + selectedDate);
-        console.log(unavailable_times);
+        bookingsList = document.querySelector('.booking-for-day');
+        if (dateInput.value === "") {
+            endTimeSelect.style.pointerEvents = 'none';
+            endTimeSelect.style.backgroundColor = 'gray';
+            startTimeSelect.style.pointerEvents = 'none';
+            startTimeSelect.style.backgroundColor = 'gray';
+            bookingsList.innerHTML = '';
+            return;
+        }
+        startTimeSelect.style.pointerEvents = 'auto';
+        startTimeSelect.style.backgroundColor = '';
+        const selectedDate = dateInput.value;
+        day_bookings = [];
+        startTimes = [];
+        bookedTimes = [];
+        for (let i = 0; i < bookings.length; i++) {
+            if (bookings[i].date === selectedDate) {
+                day_bookings.push(bookings[i]);
+                startTimes.push(bookings[i].start_time);
+                for (let j = bookings[i].start_time; j < bookings[i].end_time; j++){
+                    bookedTimes.push(j);
+                }
+            }
+        }
+
+        day_bookings.sort((a, b) => a.start_time - b.start_time);
+
+        let formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        let day_bookings_html = '<h3>Unavailable Times for This Day (' + formattedDate + ')</h3>';
+
+        for (let j = 0; j < day_bookings.length; j++) {
+            day_bookings_html += `<li><strong>Time:</strong> ${formatStartTime(day_bookings[j].start_time)} to ${formatEndTime(day_bookings[j].end_time)}</li>`;
+        }
+        bookingsList.innerHTML = day_bookings_html;
+
+        filterStarttime();
     }
 
-    document.getElementById('start-time').addEventListener('change', filterEndtime);
+    startTimeSelect.addEventListener('change', filterEndtime);
+    endTimeSelect.addEventListener('change', function() {
+        endTimeSelect.style.pointerEvents = 'none';
+        endTimeSelect.style.backgroundColor = 'gray';
+    });
     dateInput.addEventListener('change', returnDate);
+    changeButton.addEventListener('click', clearTime);
+
 </script>

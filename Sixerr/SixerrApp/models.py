@@ -56,6 +56,6 @@ class Booking(models.Model):
 
     date = models.DateField(null=False, blank=False)
     start_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0), MaxValueValidator(23)])
-    end_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0), MaxValueValidator(23)])
+    end_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(1), MaxValueValidator(24)])
     price = models.FloatField(null=False, blank=False, default=0.0, validators=[MinValueValidator(0.0)])
     modality = models.CharField(null=False, blank=False, max_length=20, default='onsite')

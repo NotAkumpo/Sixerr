@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import UpdateView
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 # Create your views here.
 
@@ -208,7 +210,7 @@ class BookingView(LoginRequiredMixin, TemplateView):
             booking.client = request.user
             booking.mentor = mentor
             booking.booking_id = str(booking.client.username) + str(booking.mentor.username) + str(Booking.objects.count())
-            booking.price = mentor.hourly_rate * (booking.end_time - booking.start_time)
+            booking.price = round(mentor.hourly_rate * (booking.end_time - booking.start_time), 2)
             booking.save()
             return redirect('home')
         
@@ -221,7 +223,8 @@ class BookingView(LoginRequiredMixin, TemplateView):
         username = self.kwargs.get('username')
         context['mentor'] = User.objects.get(username=username)
         context['user'] = self.request.user
-        context['booking'] = Booking.objects.filter(mentor=context['mentor'])
+        bookings = Booking.objects.filter(mentor=context['mentor'])
+        context['bookings'] = json.dumps(list(bookings.values('date', 'start_time', 'end_time')), cls=DjangoJSONEncoder)
         
         context['form'] = BookingForm() or kwargs.get('form')
         return context
@@ -251,8 +254,8 @@ class ScheduleView(LoginRequiredMixin, TemplateView):
         bookings = Booking.objects.filter(Q(client=self.request.user) | Q(mentor=self.request.user)).order_by('date', 'start_time')
 
         for booking in bookings:
-            booking.start_time = f"{(booking.start_time % 12) + 1}:00 {'AM' if booking.start_time < 12 else 'PM'}"
-            booking.end_time = f"{(booking.end_time % 12) + 1}:00 {'AM' if booking.end_time < 12 else 'PM'}"
+            booking.start_time = f"{(booking.start_time % 12) if booking.start_time not in [0, 12] else 12}:00 {'AM' if booking.start_time < 12 else 'PM'}"
+            booking.end_time = f"{(booking.end_time % 12) if booking.end_time not in [12, 24] else 12}:00 {'AM' if booking.end_time < 12 or booking.end_time == 24 else 'PM'}{' ND' if booking.end_time == 24 else ''}"
 
         context['bookings'] = bookings
         return context

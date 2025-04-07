@@ -10,6 +10,7 @@
                 <p><strong>Client:</strong> {{ booking.client.first_name }} {{ booking.client.last_name }}</p>
                 <p><strong>Time:</strong> {{ booking.start_time }} to {{ booking.end_time }}</p>
                 <p><strong>Modality:</strong> {{ booking.modality }}</p>
+                <p><strong>Price:</strong> ${{ booking.price }}</p>
             </li>
             <hr>
         {% endfor %}
