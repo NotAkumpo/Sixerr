@@ -212,6 +212,12 @@ class BookingView(LoginRequiredMixin, TemplateView):
             booking.booking_id = str(booking.client.username) + str(booking.mentor.username) + str(Booking.objects.count())
             booking.price = round(mentor.hourly_rate * (booking.end_time - booking.start_time), 2)
             booking.save()
+            self.request.user.balance = round(self.request.user.balance - booking.price, 2)
+            self.request.user.save()
+            mentor.popularity += 1
+            mentor.save()
+            mentor.skill.popularity += 1
+            mentor.skill.save()
             return redirect('home')
         
         context = self.get_context_data(**kwargs)
