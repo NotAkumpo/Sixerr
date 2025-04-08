@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 {% extends 'taskbar.html' %}
 {% load static %}
@@ -38,3 +39,15 @@
 
 {% endblock %}
 </html>
+=======
+<img src="{{ user.image.url }}" style="width:100px; height:100px;">
+<p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Join : {{ user.role }}</p>
+<p>Join Date: {{ user.date_joined}}</p>
+<p>Bio: {{ user.bio }}</p>
+{% if request.user.username == user.username %}
+    <p>Balance: ${{ user.balance }}</p>
+    <a href="{% url 'edit_bio' user.username %}">Edit Bio</a>
+{% endif %}
+>>>>>>> 4c1d701b65f9c0c78b8f4b7e5e04f7de613000ce

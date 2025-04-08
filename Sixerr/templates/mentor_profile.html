@@ -11,5 +11,6 @@
     <a href="{% url 'booking' mentor.username %}"><p>Book a Session</p></a>
 {% endif %}
 {% if request.user.username == mentor.username %}
+    <p>Balance: ${{ mentor.balance }}</p>
     <a href="{% url 'edit_bio' mentor.username %}">Edit Bio</a>
 {% endif %}

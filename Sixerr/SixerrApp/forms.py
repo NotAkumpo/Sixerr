@@ -52,7 +52,6 @@ class BookingForm(forms.ModelForm):
     )
     start_time = forms.IntegerField(
         widget=forms.Select(choices=[
-            ('', 'Choose Start Time')] + [
             (i, f'{(i % 12) if i not in [0, 12] else 12}:00 {"AM" if i < 12 else "PM"}') for i in range(24)
         ], attrs={'id': 'start-time'}), 
         validators=[MinValueValidator(0), MaxValueValidator(23)],
@@ -60,9 +59,8 @@ class BookingForm(forms.ModelForm):
     )
     end_time = forms.IntegerField(
         widget=forms.Select(choices=[
-            ('', 'Choose End Time')] + [
             (i, f'{(i % 12) if i not in [12, 24] else 12}:00 {"AM" if i < 12 or i == 24 else "PM"}{" ND" if i == 24 else ""}') for i in range(1, 25)
-        ], attrs={'id': 'end-time'}), 
+        ], attrs={'id': 'end-time'}),   
         validators=[MinValueValidator(1), MaxValueValidator(24)],
         required=True
     )
