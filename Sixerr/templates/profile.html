@@ -1,9 +1,40 @@
-<img src="{{ user.image.url }}" style="width:100px; height:100px;">
-<p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-<p>Email: {{ user.email }}</p>
-<p>Join : {{ user.role }}</p>
-<p>Join Date: {{ user.date_joined}}</p>
-<p>Bio: {{ user.bio }}</p>
-{% if request.user.username == user.username %}
-    <a href="{% url 'edit_bio' user.username %}">Edit Bio</a>
-{% endif %}
+<!doctype html>
+{% extends 'taskbar.html' %}
+{% load static %}
+<html lang="en">
+{% block content %}
+    <head>
+        <meta charset="utf-8">
+        <title>User Profile</title>
+        <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=2.0">
+        <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
+    </head>
+
+    <body>
+        <div class="profile-info">
+            <img src="{{ user.image.url }}" style="width:100px; height:100px;">
+                <div class = "name-label">
+                    <p>{{ user.first_name }} {{ user.last_name }}</p>
+                </div>
+                <div class = "user-info">
+                    <p>{{ user.role }}</p>
+                    <p>{{ user.email }}</p>
+                </div>
+            
+            
+            <p>{{ user.date_joined}}</p>
+        </div>
+
+        <hr class="divider">
+        <div class="bio">
+            <p>Bio: {{ user.bio }}</p>
+            {% if request.user.username == user.username %}
+                <a href="{% url 'edit_bio' user.username %}">Edit Bio</a>
+            {% endif %}
+        </div>
+        
+    </body>
+    
+
+{% endblock %}
+</html>
