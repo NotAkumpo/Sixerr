@@ -8,6 +8,9 @@
     <p>Date of Session: {{ form.date }}</p>
     <p>Modality: {{ form.modality }}</p>
     <p>Time: {{ form.start_time }} to {{ form.end_time }}</p> 
+    <p>Current Balance: ${{ user.balance }}</p>
+    <p>{{ mentor.first_name }} {{ mentor.last_name }}'s Hourly Rate: $<span class="hourly-rate">{{ mentor.hourly_rate }}</span></p>
+    <p class="running-total"></p>
     <!-- <p>Total Price for Sessions: ${{ booking.price }}</p> -->
 
     <button type="submit" class="submit-button">Book Session</button>
@@ -25,20 +28,26 @@
 
 <script>
     const dateInput = document.getElementById('date');
-    const bookings = JSON.parse('{{ bookings|safe }}');
     const endTimeSelect = document.getElementById('end-time');
     const startTimeSelect = document.getElementById('start-time');
     const changeButton = document.querySelector('.change-button');
-    let day_bookings = [];
-    let packed_day = null;
+    const submitButton = document.querySelector('.submit-button');
+    const hourlyRate = parseFloat(document.querySelector('.hourly-rate').textContent.trim());
+    const runningTotal = document.querySelector('.running-total');
+    const bookings = JSON.parse('{{ bookings|safe }}');
+    let dayBookings = [];
     let startTimes = [];
-    let endTimes = [];
+    let bookedTimes = [];
 
-    // endTimeSelect.style.pointerEvents = 'none';
-    // endTimeSelect.style.backgroundColor = 'gray';
-    // startTimeSelect.style.pointerEvents = 'none';
-    // startTimeSelect.style.backgroundColor = 'gray';
-    // filterEndtime();
+    startTimeSelect.value = null;
+    endTimeSelect.value = null;
+    submitButton.disabled = true;
+    changeButton.disabled = true;
+
+    startTimeSelect.style.pointerEvents = 'none';
+    startTimeSelect.style.backgroundColor = 'gray';
+    endTimeSelect.style.pointerEvents = 'none';
+    endTimeSelect.style.backgroundColor = 'gray';
 
     function formatStartTime(i){
         return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 0 ) ? "AM" : "PM")
@@ -51,12 +60,14 @@
     function filterStarttime(){
         startTimeSelect.style.pointerEvents = 'auto';
         startTimeSelect.style.backgroundColor = '';
+        submitButton.disabled = true;
+        changeButton.disabled = true;
 
         while (startTimeSelect.options.length) {
             startTimeSelect.remove(0);
         }
 
-        for (let i = 0; i <= 24; i++) {
+        for (let i = 0; i <= 23; i++) {
             if (bookedTimes.includes(i)){
                 continue;
             }
@@ -67,11 +78,7 @@
             startTimeSelect.add(option);
         }
 
-        const defopt = document.createElement('option');
-        defopt.value = '';
-        defopt.text = "Select Start Time";
-        startTimeSelect.add(defopt);
-        startTimeSelect.value = '';
+        startTimeSelect.value = null;
     }
 
     function filterEndtime(){
@@ -104,16 +111,7 @@
             }
         }
 
-        if (endTime > startTime){
-            endTimeSelect.value = endTime;
-        }
-        else {
-            const defopt = document.createElement('option');
-            defopt.value = '';
-            defopt.text = "Select End Time";
-            defopt.disabled = true;
-            endTimeSelect.value = '';
-        }
+        endTimeSelect.value = null;
         // console.log(bookings);
     }
 
@@ -125,24 +123,26 @@
     }
 
     function returnDate(){
-        bookingsList = document.querySelector('.booking-for-day');
+        let bookingsList = document.querySelector('.booking-for-day');
         if (dateInput.value === "") {
             endTimeSelect.style.pointerEvents = 'none';
             endTimeSelect.style.backgroundColor = 'gray';
             startTimeSelect.style.pointerEvents = 'none';
             startTimeSelect.style.backgroundColor = 'gray';
             bookingsList.innerHTML = '';
+            submitButton.disabled = true;
+            changeButton.disabled = true;
             return;
         }
         startTimeSelect.style.pointerEvents = 'auto';
         startTimeSelect.style.backgroundColor = '';
         const selectedDate = dateInput.value;
-        day_bookings = [];
+        dayBookings = [];
         startTimes = [];
         bookedTimes = [];
         for (let i = 0; i < bookings.length; i++) {
             if (bookings[i].date === selectedDate) {
-                day_bookings.push(bookings[i]);
+                dayBookings.push(bookings[i]);
                 startTimes.push(bookings[i].start_time);
                 for (let j = bookings[i].start_time; j < bookings[i].end_time; j++){
                     bookedTimes.push(j);
@@ -150,7 +150,7 @@
             }
         }
 
-        day_bookings.sort((a, b) => a.start_time - b.start_time);
+        dayBookings.sort((a, b) => a.start_time - b.start_time);
 
         let formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -158,20 +158,36 @@
 
         let day_bookings_html = '<h3>Unavailable Times for This Day (' + formattedDate + ')</h3>';
 
-        for (let j = 0; j < day_bookings.length; j++) {
-            day_bookings_html += `<li><strong>Time:</strong> ${formatStartTime(day_bookings[j].start_time)} to ${formatEndTime(day_bookings[j].end_time)}</li>`;
+        for (let j = 0; j < dayBookings.length; j++) {
+            day_bookings_html += `<li><strong>Time:</strong> ${formatStartTime(dayBookings[j].start_time)} to ${formatEndTime(dayBookings[j].end_time)}</li>`;
         }
         bookingsList.innerHTML = day_bookings_html;
 
         filterStarttime();
+        endTimeSelect.value = null;
     }
 
+    function showTotalPrice(){
+        const startTime = parseInt(startTimeSelect.value);
+        const endTime = parseInt(endTimeSelect.value);
+        if (startTime && endTime) {
+            const totalHours = endTime - startTime;
+            const totalPrice = (totalHours * hourlyRate).toFixed(2);
+            runningTotal.innerHTML = `<p>Total Price for Sessions: $${totalPrice}</p>`;
+        } else {
+            runningTotal.innerHTML = '';
+        }
+    }
+
+    dateInput.addEventListener('change', returnDate);
     startTimeSelect.addEventListener('change', filterEndtime);
     endTimeSelect.addEventListener('change', function() {
         endTimeSelect.style.pointerEvents = 'none';
         endTimeSelect.style.backgroundColor = 'gray';
+        submitButton.disabled = false;
+        changeButton.disabled = false;
+        showTotalPrice();
     });
-    dateInput.addEventListener('change', returnDate);
     changeButton.addEventListener('click', clearTime);
 
 </script>

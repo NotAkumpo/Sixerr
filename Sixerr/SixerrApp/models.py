@@ -42,6 +42,7 @@ class User(AbstractUser):
     rating = models.FloatField(default=0.0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     hourly_rate = models.FloatField(default=0.0, validators=[MinValueValidator(0.0)])
     bio = models.TextField(null=False, blank=False, default='I love Sixerr!')
+    balance = models.FloatField(null=False, blank=False, default=0.0, validators=[MinValueValidator(0.0)])
 
 class Booking(models.Model):
     booking_id = models.CharField(
