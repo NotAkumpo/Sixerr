@@ -1,4 +1,10 @@
-{% extends 'mentor_taskbar.html' %}
+{% if request.user.role == 'mentor' %}
+    <!-- Include the mentor taskbar if the logged-in user is a mentor -->
+    {% include 'mentor_taskbar.html' %}
+{% else %}
+    <!-- Include the regular user taskbar for non-mentor users -->
+    {% include 'taskbar.html' %}
+{% endif %}
 
 {% block content %}
     <div class="mentor-profile">
