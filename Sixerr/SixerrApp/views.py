@@ -54,7 +54,7 @@ def login_view(request):
                 return redirect('home')
             elif user is not None and user.role == 'mentor':
                 login(request, user)
-                return redirect('mentor_home')
+                return redirect('mentor_profile', username=username) # redirect to mentor profile
             elif User.objects.filter(username=username).exists():
                 msg = 'Invalid password.'
             else:
@@ -75,7 +75,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.role != 'client':
-            return redirect('mentor_home')
+            return redirect('mentor_profile', username=request.user.username)
         return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -108,7 +108,7 @@ class MentorListView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.role != 'client':
-            return redirect('mentor_home')
+            return redirect('mentor_profile', username=request.user.username)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -137,7 +137,16 @@ class MentorListView(LoginRequiredMixin, TemplateView):
         if mentor_search:
             mentors = mentors.filter(first_name__icontains=mentor_search) | mentors.filter(last_name__icontains=mentor_search)
 
-        # Filtering 
+        # Sorting by selected field and order
+        sort_by = self.request.GET.get('sort_by', 'popularity')  # Default to sorting by popularity
+        order = self.request.GET.get('order', 'desc')  # Default to descending order
+
+        if order == 'asc':
+            mentors = mentors.order_by(sort_by)  # Ascending order
+        else:
+            mentors = mentors.order_by('-' + sort_by)  # Descending order
+
+        # Filtering by popularity, rating, and hourly rate
         popularity = self.request.GET.get('popularity', None)
         popularity_operator = self.request.GET.get('popularity_operator', 'gt')
         rating = self.request.GET.get('rating', None)
@@ -152,26 +161,14 @@ class MentorListView(LoginRequiredMixin, TemplateView):
         if hourly_rate:
             mentors = mentors.filter(hourly_rate__gt=hourly_rate) if hourly_rate_operator == 'gt' else mentors.filter(hourly_rate__lt=hourly_rate)
 
-        # If filtered, show all mentors sorted by popularity
-        if any([mentor_search, popularity, rating, hourly_rate]):
-            context['mentors'] = mentors.order_by('-popularity')  # Show all mentors
+        # Handle no mentors
+        if mentors.exists():
+            context['mentors'] = mentors
         else:
-            context['mentors'] = mentors.order_by('-popularity')[:10]  # Show only top 10 if no filters
-
-        if not context['mentors']:
             context['no_results_message'] = "There are no mentors with that criteria."
+            context['mentors'] = []
 
         return context
-
-class MentorHomeView(LoginRequiredMixin, TemplateView):
-    template_name = 'mentor_home.html'
-
-    login_url = reverse_lazy('login_view')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.role != 'mentor':
-            return redirect('home')
-        return super().dispatch(request, *args, **kwargs)
     
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'

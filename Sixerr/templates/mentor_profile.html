@@ -1,16 +1,22 @@
-<img src="{{ mentor.image.url }}" style="width:100px; height:100px;">
-<p>Name: {{ mentor.first_name }} {{ mentor.last_name }}</p>
-<p>Email: {{ mentor.email }}</p>
-<p>Role: {{ mentor.role }}</p>
-<p>Skill Taught: {{ mentor.skill }}</p>
-<p>Join Date: {{ mentor.date_joined }}</p>
-<p>Hourly Rate: ${{ mentor.hourly_rate }}</p>
-<p>Rating: {{ mentor.rating }}/5</p>
-<p>Bio: {{ mentor.bio }}</p>
-{% if request.user.role == 'client' %}
-    <a href="{% url 'booking' mentor.username %}"><p>Book a Session</p></a>
-{% endif %}
-{% if request.user.username == mentor.username %}
-    <p>Balance: ${{ mentor.balance }}</p>
-    <a href="{% url 'edit_bio' mentor.username %}">Edit Bio</a>
-{% endif %}
+{% extends 'mentor_taskbar.html' %}
+
+{% block content %}
+    <div class="mentor-profile">
+        <img src="{{ mentor.image.url }}" style="width:100px; height:100px;">
+        <p>Name: {{ mentor.first_name }} {{ mentor.last_name }}</p>
+        <p>Email: {{ mentor.email }}</p>
+        <p>Role: {{ mentor.role }}</p>
+        <p>Skill Taught: {{ mentor.skill }}</p>
+        <p>Join Date: {{ mentor.date_joined }}</p>
+        <p>Hourly Rate: ${{ mentor.hourly_rate }}</p>
+        <p>Rating: {{ mentor.rating }}/5</p>
+        <p>Bio: {{ mentor.bio }}</p>
+        {% if request.user.role == 'client' %}
+            <a href="{% url 'booking' mentor.username %}"><p>Book a Session</p></a>
+        {% endif %}
+        {% if request.user.username == mentor.username %}
+            <p>Balance: ${{ mentor.balance }}</p>
+            <a href="{% url 'edit_bio' mentor.username %}">Edit Bio</a>
+        {% endif %}
+    </div>
+{% endblock %}

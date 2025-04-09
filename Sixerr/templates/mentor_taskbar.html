@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/taskbar.css' %}?v=1.0">
+    <link rel="icon" type="image/png" href="{% static 'logoIcon.ico' %}">
+</head>
+<body>
+
+<div class="mentor-taskbar">
+    <ul>
+        <li><a href="{% url 'mentor_profile' request.user.username %}">Profile</a></li>
+        <li><a href="#" class="disabled">Chats</a></li>
+        <li><a href="#" class="disabled">Schedule</a></li>
+        <li><a href="{% url 'logout_view' %}">Logout</a></li>
+    </ul>
+</div>
+
+<div id="content">
+    {% block content %}{% endblock %}
+</div>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

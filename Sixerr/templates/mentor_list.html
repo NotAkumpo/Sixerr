@@ -11,15 +11,19 @@
     </head>
 
     <body>
+        <!-- Title above the search bar -->
+        <div class="mentor-title">
+            <h2>List of Mentors for {% if skill %}{{ skill.skill_name }}{% else %}All Skills{% endif %}</h2>
+        </div>
+
         <form method="get" class="search-container">
             <input type="text" class="search-input" name="mentor_search" placeholder="Search a Mentor" value="{{ request.GET.mentor_search }}">
             <button type="submit" class="search-button">
                 <img src="{% static 'search-icon.png' %}" alt="Search" class="searchlogo">
             </button>
-        </form>        
+        </form>
 
-
-        <!--- Filter --->
+        <!--- Filter ---> 
         <form method="get" action="{% if skill and skill.skill_name %}{% url 'mentor_list' skill_name=skill.skill_name %}{% else %}{% url 'mentor_list' skill_name='default' %}{% endif %}">
             <input type="hidden" name="skill_name" value="{{ skill.skill_name|default_if_none:'' }}">
         
@@ -27,12 +31,12 @@
                 <div class="filter-label">Popularity</div>
                 <div class="filter-box">
                     <select name="popularity_operator" class="filter-operator">
-                        <option value="gt">></option>
-                        <option value="lt"><</option>
+                        <option value="gt" {% if request.GET.popularity_operator == "gt" %}selected{% endif %}>></option>
+                        <option value="lt" {% if request.GET.popularity_operator == "lt" %}selected{% endif %}><</option>
                     </select>
                 </div>
                 <div class="filter-box">
-                    <input type="number" name="popularity" step="1" min="0" class="filter-input">
+                    <input type="number" name="popularity" step="1" min="0" class="filter-input" value="{{ request.GET.popularity }}">
                 </div>
         
                 <div class="filter-divider"></div>
@@ -40,12 +44,12 @@
                 <div class="filter-label">Rating</div>
                 <div class="filter-box">
                     <select name="rating_operator" class="filter-operator">
-                        <option value="gt">></option>
-                        <option value="lt"><</option>
+                        <option value="gt" {% if request.GET.rating_operator == "gt" %}selected{% endif %}>></option>
+                        <option value="lt" {% if request.GET.rating_operator == "lt" %}selected{% endif %}><</option>
                     </select>
                 </div>
                 <div class="filter-box">
-                    <input type="number" name="rating" step="0.1" min="0" max="5" class="filter-input">
+                    <input type="number" name="rating" step="0.1" min="0" max="5" class="filter-input" value="{{ request.GET.rating }}">
                 </div>
         
                 <div class="filter-divider"></div>
@@ -53,12 +57,12 @@
                 <div class="filter-label">Rates</div>
                 <div class="filter-box">
                     <select name="hourly_rate_operator" class="filter-operator">
-                        <option value="lt"><</option>
-                        <option value="gt">></option>
+                        <option value="lt" {% if request.GET.hourly_rate_operator == "lt" %}selected{% endif %}><</option>
+                        <option value="gt" {% if request.GET.hourly_rate_operator == "gt" %}selected{% endif %}>></option>
                     </select>
                 </div>
                 <div class="filter-box">
-                    <input type="number" name="hourly_rate" step="0.01" min="0" class="filter-input">
+                    <input type="number" name="hourly_rate" step="0.01" min="0" class="filter-input" value="{{ request.GET.hourly_rate }}">
                 </div>
         
                 <button type="submit" class="filter-btn">
@@ -67,17 +71,48 @@
             </div>
         </form>
         
+        <!-- Display Title Mentors -->
+        {% if title %}
+            <h2>{{ title }}</h2>
+        {% endif %}
 
         <div style="display: flex; align-items: center;">
             {% if skill %}
                 <h2>Search results for "{{ skill }}"</h2>
-                <!-- <img src="{{ skill.image.url }}" style="width:100px; height:100px;"> -->
             {% endif %}
             <p class="mentor-count">{{ mentors|length }} mentors found</p>
         </div>
         <hr class="mentor-divider">
-        
-        
+
+        <!--- Sort By Section ---> 
+        <form method="get" action="{% if skill and skill.skill_name %}{% url 'mentor_list' skill_name=skill.skill_name %}{% else %}{% url 'mentor_list' skill_name='default' %}{% endif %}">
+            <input type="hidden" name="skill_name" value="{{ skill.skill_name|default_if_none:'' }}">
+            <div class="sort-by-row">
+                <div class="sort-by-label">Sort By</div>
+                <div class="sort-by-box">
+                    <select name="sort_by" class="sort-by-operator">
+                        <option value="popularity" {% if request.GET.sort_by == "popularity" %}selected{% endif %}>Popularity</option>
+                        <option value="rating" {% if request.GET.sort_by == "rating" %}selected{% endif %}>Rating</option>
+                        <option value="hourly_rate" {% if request.GET.sort_by == "hourly_rate" %}selected{% endif %}>Rates</option>
+                    </select>
+                </div>
+
+                <div class="sort-by-divider"></div>
+
+                <div class="sort-by-label">Order</div>
+                <div class="sort-by-box">
+                    <select name="order" class="sort-by-operator">
+                        <option value="desc" {% if request.GET.order == "desc" or not request.GET.order %}selected{% endif %}>Descending</option>
+                        <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>Ascending</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="sort-btn">
+                    <img src="{% static 'sort-icon.png' %}" alt="Sort" class="sort-icon">
+                </button>
+            </div>
+        </form>
+
         <!-- <ul>
             {% if mentors %}
                 {% for mentor in mentors %}
@@ -95,7 +130,7 @@
                     <div class="mentor-card">
                         <img src="{{ mentor.image.url }}" alt="{{ mentor.first_name }}" class="mentor-img">
                         <div class="mentor-info">
-                            <h4>{{ mentor.first_name }} {{ mentor.last_name }}</h4>
+                            <h4>{{ mentor.first_name|capfirst }} {{ mentor.last_name|capfirst }}</h4>
                             <p>Popularity: {{ mentor.popularity }}</p>
                             <p>Rating: {{ mentor.rating }}</p>
                             <p>Rates: ${{ mentor.hourly_rate }}/hr</p>
