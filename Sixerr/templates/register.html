@@ -1,80 +1,111 @@
 {% load static %} 
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Register</title>
-    <link rel="stylesheet" href="{% static 'css/register.css' %}">
-</head>
-<body>
-    <div class="container">
-        <img src="{% static 'fullLogoBlue.png' %}" alt="Sixerr Logo" class="logo">
-
-        <div class="rectangle">
-            <h2>Create an Account</h2>
-            <form action="{% url 'register_view' %}" method="POST" class="register-form">
-                {% csrf_token %}
-
-                <div class="input-row">
-                    <div class="input-group">
-                        <label>First Name</label>
-                        {{ form.first_name }}
-                    </div>
-                    <div class="input-group">
-                        <label>Last Name</label>
-                        {{ form.last_name }}
-                    </div>
-                </div>
-
-
-                <div class="input-row">
-                    <div class="input-group">
-                        <label>Username</label>
-                        {{ form.username }}
-                    </div>
-                    <div class="input-group">
-                        <label>Email</label>
-                        {{ form.email }}
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div class="input-group">
-                        <label>Password</label>
-                        {{ form.password1 }}
-                    </div>
-                    <div class="input-group">
-                        <label>Confirm Password</label>
-                        {{ form.password2 }}
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div class="input-group">
-                        <label>Role:</label>
-                        <select name="role" id="id_role" class="dropdown">
-                            {% for value, label in form.role.field.choices %}
-                                <option value="{{ value }}">{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Skill</label>
-                        {{ form.skill }}
-                    </div>
-                </div>
-
-                <button type="submit" class="submit-btn">Submit</button>
-            </form>
-
-            <form action="{% url 'login_view' %}" class="register-form">
-                <button class="submit-btn">Already have an account? Login now!</button>
-            </form>
-
-            {% if msg %}
-                <p class="error-msg">{{ msg }}</p>
-            {% endif %}
-        </div>
-    </div>
-</body>
-</html>
+ <!doctype html>
+ <html lang="en">
+ <head>
+     <meta charset="utf-8">
+     <title>Register</title>
+     <link rel="stylesheet" href="{% static 'css/register.css' %}?v=1.0">
+     <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
+ </head>
+ <body>
+     <div class="container">
+         <img src="{% static 'fullLogoBlue.png' %}" alt="Sixerr Logo" class="logo">
+ 
+         <div class="rectangle">
+             <h2>Create an Account</h2>
+             <form action="{% url 'register_view' %}" method="POST" class="register-form" enctype="multipart/form-data">
+                 {% csrf_token %}
+ 
+                 <div class="input-row">
+                     <div class="input-group">
+                         <label>First Name</label>
+                         {{ form.first_name }}
+                     </div>
+                     <div class="input-group">
+                         <label>Last Name</label>
+                         {{ form.last_name }}
+                     </div>
+                 </div>
+ 
+ 
+                 <div class="input-row">
+                     <div class="input-group">
+                         <label>Username</label>
+                         {{ form.username }}
+                     </div>
+                     <div class="input-group">
+                         <label>Email</label>
+                         {{ form.email }}
+                     </div>
+                 </div>
+ 
+                 <div class="input-row">
+                     <div class="input-group">
+                         <label>Password</label>
+                         {{ form.password1 }}
+                     </div>
+                     <div class="input-group">
+                         <label>Confirm Password</label>
+                         {{ form.password2 }}
+                     </div>
+                 </div>
+ 
+                 <div class="input-row">
+                     <div class="input-group">
+                         <label>Role:</label>
+                         <select name="role" id="id_role" class="dropdown">
+                             {% for value, label in form.role.field.choices %}
+                                 <option value="{{ value }}">{{ label }}</option>
+                             {% endfor %}
+                         </select>
+                     </div>
+                     <div class="input-group">
+                         <label>Skill</label>
+                         <select name="skill" id="id_skill" class="dropdown">
+                             {% for skill in skills %}
+                                 <option value="{{ skill }}">{{ skill|capfirst }}</option>
+                             {% endfor %}
+                         </select>
+                     </div>
+                 </div>
+ 
+                 <div class="input-row">
+                     <div class="input-group">
+                         <label>Profile Picture</label>
+                         {{ form.image }}
+                     </div>
+                 </div>
+ 
+                 <button type="submit" class="submit-btn">Sign Up</button>
+             </form>
+ 
+             <form action="{% url 'login_view' %}" class="register-form">
+                 <button class="submit-btn">Already have an account? Login now!</button>
+             </form>
+ 
+             {% if msg %}
+                 <p class="error-msg">{{ msg }}</p>
+             {% endif %}
+         </div>
+     </div>
+ 
+ 
+     <script>
+ 
+         const roleSelect = document.getElementById('id_role');
+         const skillInput = document.getElementById('id_skill');
+ 
+ 
+         roleSelect.addEventListener('change', function() {
+             if (this.value === 'client' || this.value === 'admin') {
+                 skillInput.value = ''; // Clear the skill input
+                 skillInput.disabled = true; // Optional: Disable the field so it can’t be edited
+             } else {
+                 skillInput.disabled = false;
+             }
+         });
+ 
+     </script>
+ 
+ </body>
+ </html>
