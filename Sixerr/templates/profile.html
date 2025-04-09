@@ -6,35 +6,54 @@
     <head>
         <meta charset="utf-8">
         <title>User Profile</title>
-        <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=2.0">
+        <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=3.0">
         <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
     </head>
 
     <body>
-        <div class="profile-info">
-            <img src="{{ user.image.url }}" style="width:100px; height:100px;">
+        <div class = "balance-column" style="align-items: flex-start;">
+            <div class="balance-text">
+                <p>Account Balance</p>
+            </div> 
+            <div class="balance-amount">
+                {% if request.user.username == user.username %}
+                    <p>$ {{ user.balance }}</p>
+                {% endif %}
+            </div>    
+        </div>
+        
+        <div class="profile-row">
+            <div class="profile-column left">
+                <img src="{{ user.image.url }}" style="width:130px; height:130px;">
+            </div>
+            <div class="profile-column right" style="align-items: flex-start;"> 
                 <div class = "name-label">
                     <p>{{ user.first_name }} {{ user.last_name }}</p>
                 </div>
                 <div class = "user-info">
-                    <p>{{ user.role }}</p>
+                    <p>{{ user.role |capfirst}}</p>
                     <p>{{ user.email }}</p>
                 </div>
-            
-            
-            <p>{{ user.date_joined}}</p>
+                <div class = "user-date">
+                    <img src="{% static 'calendar-logo.png' %}" alt="calendar-logo" class="calendar-logo" style="width:17px; height:17px;">
+                    <span>Joined {{ user.date_joined|date:"F d, Y" }}</span>
+                </div>
+                
+            </div>
         </div>
 
         <hr class="divider">
-        <div class="bio">
-            <p>Bio: {{ user.bio }}</p>
-            {% if request.user.username == user.username %}
-                <p>Balance: ${{ user.balance }}</p>
-                <a href="{% url 'edit_bio' user.username %}">Edit Bio</a>
-            {% endif %}
+        <div class = "center-wrapper">
+            <div class="bio-column">
+                <h1>Bio</h1>
+                <p>{{ user.bio }}</p>
+                {% if request.user.username == user.username %}
+                    <a href="{% url 'edit_bio' user.username %}" class="edit-btn">Edit Bio</a>
+                {% endif %}
+            </div>
         </div>
+        
         
     </body>
     
-
 {% endblock %}

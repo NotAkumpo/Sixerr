@@ -1,6 +1,29 @@
-<h2>Edit Your Bio</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+<!doctype html>
+
+{% load static %}
+<html lang="en">
+{% block content %}
+    <head>
+        <meta charset="utf-8">
+        <title>Edit Bio</title>
+        <link rel="stylesheet" href="{% static 'css/editbio.css' %}?v=3.0">
+        <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
+    </head>
+    
+    <body>
+        <div class="center-wrapper">
+            <div class="form-container">
+                <h2>Edit Your Bio</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="edit-btn">Save</button>
+                </form>
+            </div>
+        </div>
+    </body>
+    
+ 
+    
+
+{% endblock %}

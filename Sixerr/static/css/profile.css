@@ -20,6 +20,10 @@ body, html {
 
 img {
     border-radius: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }
 
 .divider {
@@ -29,25 +33,148 @@ img {
     width: 100%;
 }
 
-.profile-info {
-    margin-top: 5%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: auto;
-    width: 20%;
-    line-height: 0.5;
+.profile-row {
+    margin-top: 0%;
+    display: flex;
+    flex-direction: row; /* Lay out child divs horizontally */
+    align-items: center;
+    justify-content: center;
+    gap: 24px; /* Space between profile pic and info */
+}
+
+.profile-column.left {
+    align-items: center;
+}
+
+.profile-column.right {
+    /* align-items: left; */
+    margin: 2px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.balance-column {
+    margin-top: 10px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.bio-column {
+    margin-top: 0px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 50%;
+    justify-content: center;
+}
+.center-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    padding-top: 10px;
+}
+
+.bio-column h1 {
+    font-size: 20px;
+    color: #1d2b8a;
+    font-weight: bold; 
+    line-height: 1.2;
+    margin: 0;      
+    padding: 0;
+}
+
+.bio-column p {
+    font-size: 20px;
+    color: #1d2b8a;
+    font-weight: normal; 
+    line-height: 1.2;
+    margin: 20px;      
+    padding: 0;
+    text-align: center;
+}
+
+.edit-btn {
+    font-weight: normal;
+    font-family: 'GI';
+    width: 13%;
+    padding: 8px;
+    background-color: #1d2b8a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 10px auto 0 auto;
+    text-align: center;
+    text-decoration: none;
+}
+
+
+.balance-text {
+    font-size: 14px;
+    font-weight: normal;
+    color: #4a5187;
+}
+.balance-amount {
+    font-size: 25px;
+    color: #4a5187;
+    font-weight: bold;
+}
+.balance-amount p,
+.balance-text p {
+    margin: 0;      
+    padding: 0;      
+    line-height: 1.2; /* Optional: tighter vertical spacing */
+}
+
+.profile-column img {
+    border-radius: 50%;
 }
 
 .name-label {
     font-size: 25px;
     color: #1d2b8a;
     font-weight: bold;
-    text-align: center;
+    line-height: 0.1;
+    margin-bottom: 0px;
 }
 
 .user-info {
     font-size: 17px;
     color: #1d2b8a;
     font-weight: normal;
-    text-align: center;
+    line-height: 0.4;
+    margin-top:0px;
+}
+
+.calendar-logo {
+    border-radius: 0% !important;
+    margin-right: 3px;
+}
+
+.user-date {
+    display: flex;
+    flex-direction: row; /* Lay out child divs horizontally */
+    gap: 2px; /* Space between profile pic and info */
+
+    color: #1d2b8a;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top:4px;
+    vertical-align: left;
+}
+
+.user-date span{
+    margin-left: 3px;
+}
+
+.name-label p,
+.user-info p {
+    margin: 0;      
+    padding: 0;      
+    line-height: 1.5; /* Optional: tighter vertical spacing */
 }
