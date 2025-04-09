@@ -8,7 +8,7 @@
     <p>Date of Session: {{ form.date }}</p>
     <p>Modality: {{ form.modality }}</p>
     <p>Time: {{ form.start_time }} to {{ form.end_time }}</p> 
-    <p>Current Balance: ${{ user.balance }}</p>
+    <p>Current Balance: $<span class="current-balance">{{ user.balance }}</span></p>
     <p>{{ mentor.first_name }} {{ mentor.last_name }}'s Hourly Rate: $<span class="hourly-rate">{{ mentor.hourly_rate }}</span></p>
     <p class="running-total"></p>
     <!-- <p>Total Price for Sessions: ${{ booking.price }}</p> -->
@@ -38,6 +38,7 @@
     let dayBookings = [];
     let startTimes = [];
     let bookedTimes = [];
+    let totalPrice = 0;
 
     startTimeSelect.value = null;
     endTimeSelect.value = null;
@@ -118,8 +119,9 @@
     function clearTime(){
         endTimeSelect.style.pointerEvents = 'none';
         endTimeSelect.style.backgroundColor = 'gray';
-        endTimeSelect.value = '';
+        endTimeSelect.value = null;
         filterStarttime();
+        showTotalPrice();
     }
 
     function returnDate(){
@@ -132,6 +134,8 @@
             bookingsList.innerHTML = '';
             submitButton.disabled = true;
             changeButton.disabled = true;
+            startTimeSelect.value = null;
+            endTimeSelect.value = null;
             return;
         }
         startTimeSelect.style.pointerEvents = 'auto';
@@ -158,6 +162,10 @@
 
         let day_bookings_html = '<h3>Unavailable Times for This Day (' + formattedDate + ')</h3>';
 
+        if (dayBookings.length === 0) {
+            day_bookings_html += '<p>Mentor is available anytime.</p>';
+        }
+
         for (let j = 0; j < dayBookings.length; j++) {
             day_bookings_html += `<li><strong>Time:</strong> ${formatStartTime(dayBookings[j].start_time)} to ${formatEndTime(dayBookings[j].end_time)}</li>`;
         }
@@ -165,17 +173,27 @@
 
         filterStarttime();
         endTimeSelect.value = null;
+        showTotalPrice();
     }
 
     function showTotalPrice(){
         const startTime = parseInt(startTimeSelect.value);
         const endTime = parseInt(endTimeSelect.value);
-        if (startTime && endTime) {
+        if (startTime > -1 && endTime > -1) {
             const totalHours = endTime - startTime;
-            const totalPrice = (totalHours * hourlyRate).toFixed(2);
-            runningTotal.innerHTML = `<p>Total Price for Sessions: $${totalPrice}</p>`;
+            totalPrice = (totalHours * hourlyRate).toFixed(2);
+            runningTotal.innerHTML = `<p>Total Bill: $${totalPrice}</p>`;
+            checkBalance();
         } else {
             runningTotal.innerHTML = '';
+        }
+    }
+
+    function checkBalance(){
+        const balance = parseFloat(document.querySelector('.current-balance').textContent);
+        if (totalPrice > balance) {
+            runningTotal.innerHTML += "<p>Insufficient balance. Please add funds to your account.</p>";
+            submitButton.disabled = true;
         }
     }
 

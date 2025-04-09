@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import User, Skill, Booking
 from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import date
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -47,7 +48,7 @@ class EditBioForm(forms.ModelForm):
 
 class BookingForm(forms.ModelForm):
     date = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date', 'id': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'id': 'date', 'min': date.today().strftime('%Y-%m-%d')}),
         input_formats=['%Y-%m-%d'],
     )
     start_time = forms.IntegerField(
