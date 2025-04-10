@@ -6,14 +6,16 @@
     <head>
         <meta charset="utf-8">
         <title>User Profile</title>
-        <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=3.0">
+        <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=4.0">
         <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
     </head>
 
     <body>
         <div class = "balance-column" style="align-items: flex-start;">
             <div class="balance-text">
-                <p>Account Balance</p>
+                {% if request.user.username == user.username %}
+                    <p>Account Balance</p>
+                {% endif %}
             </div> 
             <div class="balance-amount">
                 {% if request.user.username == user.username %}
@@ -24,7 +26,7 @@
         
         <div class="profile-row">
             <div class="profile-column left">
-                <img src="{{ user.image.url }}" style="width:130px; height:130px;">
+                <img src="{{ user.image.url }}" style="width:130px; height:130px;" class="user-image">
             </div>
             <div class="profile-column right" style="align-items: flex-start;"> 
                 <div class = "name-label">

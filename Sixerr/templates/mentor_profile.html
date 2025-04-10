@@ -1,28 +1,84 @@
+<!doctype html>
 {% if request.user.role == 'mentor' %}
-    <!-- Include the mentor taskbar if the logged-in user is a mentor -->
     {% include 'mentor_taskbar.html' %}
 {% else %}
-    <!-- Include the regular user taskbar for non-mentor users -->
     {% include 'taskbar.html' %}
 {% endif %}
-
+{% load static %}
+<html lang="en">
 {% block content %}
-    <div class="mentor-profile">
-        <img src="{{ mentor.image.url }}" style="width:100px; height:100px;">
-        <p>Name: {{ mentor.first_name }} {{ mentor.last_name }}</p>
-        <p>Email: {{ mentor.email }}</p>
-        <p>Role: {{ mentor.role }}</p>
-        <p>Skill Taught: {{ mentor.skill }}</p>
-        <p>Join Date: {{ mentor.date_joined }}</p>
-        <p>Hourly Rate: ${{ mentor.hourly_rate }}</p>
-        <p>Rating: {{ mentor.rating }}/5</p>
-        <p>Bio: {{ mentor.bio }}</p>
-        {% if request.user.role == 'client' %}
-            <a href="{% url 'booking' mentor.username %}"><p>Book a Session</p></a>
-        {% endif %}
-        {% if request.user.username == mentor.username %}
-            <p>Balance: ${{ mentor.balance }}</p>
-            <a href="{% url 'edit_bio' mentor.username %}">Edit Bio</a>
-        {% endif %}
+
+    <head>
+        <meta charset="utf-8">
+        <title>Mentor Profile</title>
+        <link rel="stylesheet" href="{% static 'css/mentor_profile.css' %}?v=4.0">
+        <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
+    </head>
+
+    <div class="profile-row">
+        <div class="profile-column left">
+            <img src="{{ mentor.image.url }}" style="width:130px; height:130px;" class="user-image">
+        </div>
+        <div class="profile-column right" style="align-items: flex-start;"> 
+            <div class = "name-label">
+                <p>{{ mentor.first_name }} {{ mentor.last_name }}</p>
+            </div>
+            <div class = "user-info">
+                <p>{{ mentor.role |capfirst}}</p>
+                <p>{{ mentor.email }}</p>
+            </div>
+            <div class = "user-date">
+                <img src="{% static 'calendar-logo.png' %}" alt="calendar-logo" class="calendar-logo" style="width:17px; height:17px;">
+                <span>Joined {{ mentor.date_joined|date:"F d, Y" }}</span>
+            </div>
+            
+        </div>
     </div>
+
+    <hr class="divider">
+
+    <div class="mentor-details">
+
+        <div class="mentor-section-container">
+            <h3 class="section-title">About</h3>
+            <div class="mentor-section">
+                <div class="info-row">
+                    <div class="label">Skill Taught</div>
+                    <div class="value">{{ mentor.skill | capfirst }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="label">Bio</div>
+                    <div class="value">{{ mentor.bio|linebreaksbr }}</div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="mentor-section-container">
+            <h3 class="section-title">Mentor Info</h3>
+            <div class="mentor-section">
+                <div class="info-row">
+                    <div class="label">Rating</div>
+                    <div class="value">{{ mentor.rating }}/5</div>
+                </div>
+                <div class="info-row">
+                    <div class="label">Hourly Rate</div>
+                    <div class="value">$ {{ mentor.hourly_rate }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="label">Availability</div>
+                    <div class="value">monday to friday 8am to 5pm weekends 8am to 12pm</div>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    
+    {% if request.user.role == 'client' %}
+        <a href="{% url 'booking' mentor.username %}" class="book-btn">Book a Session</a>
+    {% endif %}
+    {% if request.user.username == mentor.username %}
+        <p>Balance: ${{ mentor.balance }}</p>
+        <a href="{% url 'edit_bio' mentor.username %}" class="edit-btn">Edit Bio</a>
+    {% endif %}
+    
 {% endblock %}
