@@ -1,0 +1,155 @@
+@font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    background-color: #1d2b8a;
+    font-family: 'GI';
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    margin: 0;
+    padding-top: 50px; 
+}
+.container {
+    text-align: center;
+}
+
+.rectangle {
+    background-color: white;
+    width: 550px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+h2 {
+    color: #1d2b8a;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 32px;
+    margin-top: 2%;
+}
+
+.user-info {
+    color: #1d2b8a;
+    font-weight: normal;
+    margin-bottom: 25px;
+    margin-top: 2px;
+}
+
+.booking-form {
+    width: 100%;
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group-date {
+    width: 96%;
+    margin-bottom: 15px;
+    text-align: left;
+    font-family: 'GI';
+}
+
+.input-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.input-row .input-group {
+    width: 48%;
+}
+
+label {
+    color: #16257a;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #1d2b8a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    font-family: 'GI';
+}
+
+.submit-btn:hover {
+    background-color: #16257a;
+}
+
+.running-total {
+    color: red;
+    font-weight: normal;
+    margin: 2px 0;
+    font-size: 15px;
+    line-height: 0.9;
+    padding: 0;
+}
+
+
+.booked-time {
+    color: #444;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.booking-for-day {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #16257a;
+    line-height: 0.6;
+    margin-bottom: 5px;
+}
+
+
+.input-group-last {
+    width: 100%;
+    margin-bottom: 0px;
+    text-align: left;
+}
+
+.input-row-last {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.input-row-last .input-group-last {
+    width: 48%;
+}

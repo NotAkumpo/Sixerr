@@ -30,7 +30,7 @@
             {% for s in skills %}
                 <div class="slide-item">
                     <a href="{% url 'mentor_list' s.skill_name %}"><img src="{{ s.image.url }}" alt="{{ s.skill_name }}" /></a>
-                    <p class="slide-label">{{ s.skill_name }}</p>
+                    <p class="slide-label">{{ s.skill_name | title }}</p>
                 </div>
                 <!-- <p>{{ s.skill_name }}</p>
                 <a href="{% url 'mentor_list' s.skill_name %}"><img src="{{ s.image.url }}" style="width:100px; height:100px;"></a> -->

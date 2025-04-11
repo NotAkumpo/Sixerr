@@ -1,211 +1,251 @@
-<h1>Available Sessions and Booking</h1>
-<p>User: {{ user.first_name }} {{ user.last_name }}</p>
-<p>Mentor: {{ mentor.first_name }} {{ mentor.last_name }}</p>
+<!doctype html>
+{% load static %}
+<html lang="en">
+{% block content %}
 
-<form method="POST">
-    {% csrf_token %}
-    
-    <p>Date of Session: {{ form.date }}</p>
-    <p>Modality: {{ form.modality }}</p>
-    <p>Time: {{ form.start_time }} to {{ form.end_time }}</p> 
-    <p>Current Balance: $<span class="current-balance">{{ user.balance }}</span></p>
-    <p>{{ mentor.first_name }} {{ mentor.last_name }}'s Hourly Rate: $<span class="hourly-rate">{{ mentor.hourly_rate }}</span></p>
-    <p class="running-total"></p>
-    <!-- <p>Total Price for Sessions: ${{ booking.price }}</p> -->
+    <head>
+        <meta charset="UTF-8">
+        <title>Book a Session</title>
+        <link rel="stylesheet" href="{% static 'css/booking.css' %}">
+    </head>
+    <body>
+        <div class="container">
+            <div class="rectangle">
+                <h2>Available Sessions and Booking</h2>
+                <p class="user-info">User: {{ user.first_name }} {{ user.last_name }} | Mentor: {{ mentor.first_name }} {{ mentor.last_name }}</p>
+                <!-- <p class="user-info">Mentor: {{ mentor.first_name }} {{ mentor.last_name }}</p> -->
 
-    <button type="submit" class="submit-button">Book Session</button>
-</form>
-<button class="change-button">Pick a Different Time</button>
+                <form method="POST" class="booking-form">
+                    {% csrf_token %}
+                    <div class="input-group-date">
+                        <label>Date of Session</label>
+                        {{ form.date }}
+                    </div>
+                    <div class="booking-for-day"></div>
+                    <div class="input-group">
+                        <label>Modality</label>
+                        {{ form.modality }}
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Start Time</label>
+                            {{ form.start_time }}
+                        </div>
+                        <div class="input-group">
+                            <label>End Time</label>
+                            {{ form.end_time }}
+                        </div>
+                    </div>
+                    <div class = "input-row-last">
+                        <div class="input-group-last">
+                            <label>Current Balance</label>
+                            <p>$ <span class="current-balance">{{ user.balance }}</span></p>
+                        </div>
+                        <div class="input-group-last">
+                            <label>{{ mentor.first_name }} {{ mentor.last_name }}'s Hourly Rate</label>
+                            <p>$ <span class="hourly-rate">{{ mentor.hourly_rate }}</span></p>
+                        </div>
+                    </div>
+                    
+                    <p class="running-total"></p>
 
-{% for b in booking %}
-    <p>Booked Session: {{ b.start_time }} to {{ b.end_time }} on {{ b.date }}</p>
-{% endfor %}
+                    <button type="submit" class="submit-btn submit-button">Book Session</button>
+                </form>
 
+                <button class="submit-btn change-button">Pick a Different Time</button>
 
-<div class="booking-for-day">
+                {% for b in booking %}
+                    <p class="booked-time">Booked: {{ b.start_time }} to {{ b.end_time }} on {{ b.date }}</p>
+                {% endfor %}
 
-</div>
-
-<script>
-    const dateInput = document.getElementById('date');
-    const endTimeSelect = document.getElementById('end-time');
-    const startTimeSelect = document.getElementById('start-time');
-    const changeButton = document.querySelector('.change-button');
-    const submitButton = document.querySelector('.submit-button');
-    const hourlyRate = parseFloat(document.querySelector('.hourly-rate').textContent.trim());
-    const runningTotal = document.querySelector('.running-total');
-    const bookings = JSON.parse('{{ bookings|safe }}');
-    let dayBookings = [];
-    let startTimes = [];
-    let bookedTimes = [];
-    let totalPrice = 0;
-
-    startTimeSelect.value = null;
-    endTimeSelect.value = null;
-    submitButton.disabled = true;
-    changeButton.disabled = true;
-
-    startTimeSelect.style.pointerEvents = 'none';
-    startTimeSelect.style.backgroundColor = 'gray';
-    endTimeSelect.style.pointerEvents = 'none';
-    endTimeSelect.style.backgroundColor = 'gray';
-
-    function formatStartTime(i){
-        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 0 ) ? "AM" : "PM")
-    }
-
-    function formatEndTime(i){
-        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 24 ) ? "AM" : "PM") + (i === 24 ? " ND" : "")
-    }
-
-    function filterStarttime(){
-        startTimeSelect.style.pointerEvents = 'auto';
-        startTimeSelect.style.backgroundColor = '';
-        submitButton.disabled = true;
-        changeButton.disabled = true;
-
-        while (startTimeSelect.options.length) {
-            startTimeSelect.remove(0);
-        }
-
-        for (let i = 0; i <= 23; i++) {
-            if (bookedTimes.includes(i)){
-                continue;
-            }
-            const option = document.createElement('option');
-            const formattedTime = formatStartTime(i);
-            option.value = i;
-            option.text = formattedTime;
-            startTimeSelect.add(option);
-        }
-
-        startTimeSelect.value = null;
-    }
-
-    function filterEndtime(){
-        const startTime = parseInt(document.getElementById('start-time').value);
-        const endTime = parseInt(document.getElementById('end-time').value);
-        endTimeSelect.style.pointerEvents = 'auto';
-        endTimeSelect.style.backgroundColor = '';
-        startTimeSelect.style.pointerEvents = 'none';
-        startTimeSelect.style.backgroundColor = 'gray';
-        var endTimeLimit = 24;
-
-        while (endTimeSelect.options.length) {
-            endTimeSelect.remove(0);
-        }
-
-        for (let i = startTime; i <= 23; i++){
-            if (startTimes.includes(i)){
-                endTimeLimit = i;
-                break;
-            }
-        }
+                <!-- <div class="booking-for-day"></div> -->
+            </div>
+        </div>
         
-        for (let i = startTime + 1; i <= 24; i++) {
-            if (i <= endTimeLimit) {
-                const option = document.createElement('option');
-                const formattedTime = formatEndTime(i);
-                option.value = i;
-                option.text = formattedTime;
-                endTimeSelect.add(option);
-            }
-        }
-
-        endTimeSelect.value = null;
-        // console.log(bookings);
-    }
-
-    function clearTime(){
-        endTimeSelect.style.pointerEvents = 'none';
-        endTimeSelect.style.backgroundColor = 'gray';
-        endTimeSelect.value = null;
-        filterStarttime();
-        showTotalPrice();
-    }
-
-    function returnDate(){
-        let bookingsList = document.querySelector('.booking-for-day');
-        if (dateInput.value === "") {
-            endTimeSelect.style.pointerEvents = 'none';
-            endTimeSelect.style.backgroundColor = 'gray';
-            startTimeSelect.style.pointerEvents = 'none';
-            startTimeSelect.style.backgroundColor = 'gray';
-            bookingsList.innerHTML = '';
-            submitButton.disabled = true;
-            changeButton.disabled = true;
+        <script>
+            const dateInput = document.getElementById('date');
+            const endTimeSelect = document.getElementById('end-time');
+            const startTimeSelect = document.getElementById('start-time');
+            const changeButton = document.querySelector('.change-button');
+            const submitButton = document.querySelector('.submit-button');
+            const hourlyRate = parseFloat(document.querySelector('.hourly-rate').textContent.trim());
+            const runningTotal = document.querySelector('.running-total');
+            const bookings = JSON.parse('{{ bookings|safe }}');
+            let dayBookings = [];
+            let startTimes = [];
+            let bookedTimes = [];
+            let totalPrice = 0;
+        
             startTimeSelect.value = null;
             endTimeSelect.value = null;
-            return;
-        }
-        startTimeSelect.style.pointerEvents = 'auto';
-        startTimeSelect.style.backgroundColor = '';
-        const selectedDate = dateInput.value;
-        dayBookings = [];
-        startTimes = [];
-        bookedTimes = [];
-        for (let i = 0; i < bookings.length; i++) {
-            if (bookings[i].date === selectedDate) {
-                dayBookings.push(bookings[i]);
-                startTimes.push(bookings[i].start_time);
-                for (let j = bookings[i].start_time; j < bookings[i].end_time; j++){
-                    bookedTimes.push(j);
+            submitButton.disabled = true;
+            changeButton.disabled = true;
+        
+            startTimeSelect.style.pointerEvents = 'none';
+            startTimeSelect.style.backgroundColor = 'gray';
+            endTimeSelect.style.pointerEvents = 'none';
+            endTimeSelect.style.backgroundColor = 'gray';
+        
+            function formatStartTime(i){
+                return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 0 ) ? "AM" : "PM")
+            }
+        
+            function formatEndTime(i){
+                return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 24 ) ? "AM" : "PM") + (i === 24 ? " ND" : "")
+            }
+        
+            function filterStarttime(){
+                startTimeSelect.style.pointerEvents = 'auto';
+                startTimeSelect.style.backgroundColor = '';
+                submitButton.disabled = true;
+                changeButton.disabled = true;
+        
+                while (startTimeSelect.options.length) {
+                    startTimeSelect.remove(0);
+                }
+        
+                for (let i = 0; i <= 23; i++) {
+                    if (bookedTimes.includes(i)){
+                        continue;
+                    }
+                    const option = document.createElement('option');
+                    const formattedTime = formatStartTime(i);
+                    option.value = i;
+                    option.text = formattedTime;
+                    startTimeSelect.add(option);
+                }
+        
+                startTimeSelect.value = null;
+            }
+        
+            function filterEndtime(){
+                const startTime = parseInt(document.getElementById('start-time').value);
+                const endTime = parseInt(document.getElementById('end-time').value);
+                endTimeSelect.style.pointerEvents = 'auto';
+                endTimeSelect.style.backgroundColor = '';
+                startTimeSelect.style.pointerEvents = 'none';
+                startTimeSelect.style.backgroundColor = 'gray';
+                var endTimeLimit = 24;
+        
+                while (endTimeSelect.options.length) {
+                    endTimeSelect.remove(0);
+                }
+        
+                for (let i = startTime; i <= 23; i++){
+                    if (startTimes.includes(i)){
+                        endTimeLimit = i;
+                        break;
+                    }
+                }
+                
+                for (let i = startTime + 1; i <= 24; i++) {
+                    if (i <= endTimeLimit) {
+                        const option = document.createElement('option');
+                        const formattedTime = formatEndTime(i);
+                        option.value = i;
+                        option.text = formattedTime;
+                        endTimeSelect.add(option);
+                    }
+                }
+        
+                endTimeSelect.value = null;
+                // console.log(bookings);
+            }
+        
+            function clearTime(){
+                endTimeSelect.style.pointerEvents = 'none';
+                endTimeSelect.style.backgroundColor = 'gray';
+                endTimeSelect.value = null;
+                filterStarttime();
+                showTotalPrice();
+            }
+        
+            function returnDate(){
+                let bookingsList = document.querySelector('.booking-for-day');
+                if (dateInput.value === "") {
+                    endTimeSelect.style.pointerEvents = 'none';
+                    endTimeSelect.style.backgroundColor = 'gray';
+                    startTimeSelect.style.pointerEvents = 'none';
+                    startTimeSelect.style.backgroundColor = 'gray';
+                    bookingsList.innerHTML = '';
+                    submitButton.disabled = true;
+                    changeButton.disabled = true;
+                    startTimeSelect.value = null;
+                    endTimeSelect.value = null;
+                    return;
+                }
+                startTimeSelect.style.pointerEvents = 'auto';
+                startTimeSelect.style.backgroundColor = '';
+                const selectedDate = dateInput.value;
+                dayBookings = [];
+                startTimes = [];
+                bookedTimes = [];
+                for (let i = 0; i < bookings.length; i++) {
+                    if (bookings[i].date === selectedDate) {
+                        dayBookings.push(bookings[i]);
+                        startTimes.push(bookings[i].start_time);
+                        for (let j = bookings[i].start_time; j < bookings[i].end_time; j++){
+                            bookedTimes.push(j);
+                        }
+                    }
+                }
+        
+                dayBookings.sort((a, b) => a.start_time - b.start_time);
+        
+                let formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+        
+                let day_bookings_html = '<h3>Unavailable Times for This Day (' + formattedDate + ')</h3>';
+        
+                if (dayBookings.length === 0) {
+                    day_bookings_html += '<p>Mentor is available anytime.</p>';
+                }
+        
+                for (let j = 0; j < dayBookings.length; j++) {
+                    day_bookings_html += `<li><strong>Time:</strong> ${formatStartTime(dayBookings[j].start_time)} to ${formatEndTime(dayBookings[j].end_time)}</li>`;
+                }
+                bookingsList.innerHTML = day_bookings_html;
+        
+                filterStarttime();
+                endTimeSelect.value = null;
+                showTotalPrice();
+            }
+        
+            function showTotalPrice(){
+                const startTime = parseInt(startTimeSelect.value);
+                const endTime = parseInt(endTimeSelect.value);
+                if (startTime > -1 && endTime > -1) {
+                    const totalHours = endTime - startTime;
+                    totalPrice = (totalHours * hourlyRate).toFixed(2);
+                    runningTotal.innerHTML = `<p>Total Bill: $${totalPrice}</p>`;
+                    checkBalance();
+                } else {
+                    runningTotal.innerHTML = '';
                 }
             }
-        }
+        
+            function checkBalance(){
+                const balance = parseFloat(document.querySelector('.current-balance').textContent);
+                if (totalPrice > balance) {
+                    runningTotal.innerHTML += "<p>Insufficient balance. Please add funds to your account.</p>";
+                    submitButton.disabled = true;
+                }
+            }
+        
+            dateInput.addEventListener('change', returnDate);
+            startTimeSelect.addEventListener('change', filterEndtime);
+            endTimeSelect.addEventListener('change', function() {
+                endTimeSelect.style.pointerEvents = 'none';
+                endTimeSelect.style.backgroundColor = 'gray';
+                submitButton.disabled = false;
+                changeButton.disabled = false;
+                showTotalPrice();
+            });
+            changeButton.addEventListener('click', clearTime);
+        
+        </script>
+    </body>
+</html>
+{% endblock %}
 
-        dayBookings.sort((a, b) => a.start_time - b.start_time);
-
-        let formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
-
-        let day_bookings_html = '<h3>Unavailable Times for This Day (' + formattedDate + ')</h3>';
-
-        if (dayBookings.length === 0) {
-            day_bookings_html += '<p>Mentor is available anytime.</p>';
-        }
-
-        for (let j = 0; j < dayBookings.length; j++) {
-            day_bookings_html += `<li><strong>Time:</strong> ${formatStartTime(dayBookings[j].start_time)} to ${formatEndTime(dayBookings[j].end_time)}</li>`;
-        }
-        bookingsList.innerHTML = day_bookings_html;
-
-        filterStarttime();
-        endTimeSelect.value = null;
-        showTotalPrice();
-    }
-
-    function showTotalPrice(){
-        const startTime = parseInt(startTimeSelect.value);
-        const endTime = parseInt(endTimeSelect.value);
-        if (startTime > -1 && endTime > -1) {
-            const totalHours = endTime - startTime;
-            totalPrice = (totalHours * hourlyRate).toFixed(2);
-            runningTotal.innerHTML = `<p>Total Bill: $${totalPrice}</p>`;
-            checkBalance();
-        } else {
-            runningTotal.innerHTML = '';
-        }
-    }
-
-    function checkBalance(){
-        const balance = parseFloat(document.querySelector('.current-balance').textContent);
-        if (totalPrice > balance) {
-            runningTotal.innerHTML += "<p>Insufficient balance. Please add funds to your account.</p>";
-            submitButton.disabled = true;
-        }
-    }
-
-    dateInput.addEventListener('change', returnDate);
-    startTimeSelect.addEventListener('change', filterEndtime);
-    endTimeSelect.addEventListener('change', function() {
-        endTimeSelect.style.pointerEvents = 'none';
-        endTimeSelect.style.backgroundColor = 'gray';
-        submitButton.disabled = false;
-        changeButton.disabled = false;
-        showTotalPrice();
-    });
-    changeButton.addEventListener('click', clearTime);
-
-</script>
