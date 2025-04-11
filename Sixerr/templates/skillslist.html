@@ -1,0 +1,37 @@
+<!doctype html>
+{% extends 'taskbar.html' %}
+{% load static %}
+<html lang="en">
+{% block content %}
+
+    <head>
+        <meta charset="utf-8">
+        <title>Home Screen</title>
+        <link rel="stylesheet" href="{% static 'css/home.css' %}?v=1.0">
+
+    </head>
+
+    <body>
+        <!-- <h1>Sixerr.</h1> -->
+        <img src="{% static 'fullLogoWhite3.png' %}" alt="logo" class="fulllogo">
+
+        <div>
+            {% for l in letters %}
+                <p>
+                    {{ l|title }}
+                        {% for s in skillslist %}
+                            {% if s.skill_name|slice:'1'|join:'' == l %}
+                                <a href="{% url 'mentor_list' s.skill_name %}">{{ s.skill_name|title }}</a>
+                            {% endif %}
+                        {% endfor %}
+                </p>    
+            {% endfor %}
+        </div>
+
+        <form action="{% url 'home' %}" class="login-form">
+            <button class="submit-btn">Back to home</button>
+        </form>
+
+    </body>
+{% endblock %}
+</html>

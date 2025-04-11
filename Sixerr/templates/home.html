@@ -37,6 +37,23 @@
             {% endfor %}
         </div>
 
+        <!-- <div>
+            {% for l in letters %}
+                <p>
+                    {{ l|title }}
+                        {% for s in skillslist %}
+                            {% if s.skill_name|slice:'1'|join:'' == l %}
+                                <a href="{% url 'mentor_list' s.skill_name %}">{{ s.skill_name|title }}</a>
+                            {% endif %}
+                        {% endfor %}
+                </p>    
+            {% endfor %}
+        </div> -->
+
+        <form action="{% url 'skillslist' %}" class="login-form">
+            <button class="submit-btn">See all skills</button>
+        </form>
+
     </body>
 {% endblock %}
 </html>

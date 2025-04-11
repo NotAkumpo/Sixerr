@@ -12,6 +12,7 @@ from django.views.generic.edit import UpdateView
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.core.serializers.json import DjangoJSONEncoder
+from string import ascii_lowercase
 import json
 
 # Create your views here.
@@ -88,6 +89,30 @@ class HomeView(LoginRequiredMixin, TemplateView):
             context['skills'] = skills.order_by('-popularity')
         else:
             context['skills'] = skills.order_by('-popularity')[:10]
+
+        return context
+
+class SkillsListView(LoginRequiredMixin, TemplateView):
+    template_name = 'skillslist.html'
+
+    login_url = reverse_lazy('login_view')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.role != 'client':
+            return redirect('mentor_profile', username=request.user.username)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        skillslist = Skill.objects.all()
+
+        letters = []
+        for s in skillslist:
+            if s.skill_name[0] not in letters:
+                letters.append(s.skill_name[0])
+
+        context['skillslist'] = skillslist
+        context['letters'] = letters
 
         return context
 
