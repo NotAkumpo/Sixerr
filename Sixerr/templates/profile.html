@@ -1,5 +1,9 @@
 <!doctype html>
-{% extends 'taskbar.html' %}
+{% if request.user.role == 'mentor' %}
+    {% include 'mentor_taskbar.html' %}
+{% else %}
+    {% include 'taskbar.html' %}
+{% endif %}
 {% load static %}
 <html lang="en">
 {% block content %}

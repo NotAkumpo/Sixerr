@@ -203,7 +203,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get('username')
-        context['user'] = User.objects.get(username=username)
+        context['user'] = User.objects.get(username=username, role='client')
         return context
     
 class MentorProfileView(LoginRequiredMixin, TemplateView):
@@ -270,7 +270,11 @@ class EditBioView(LoginRequiredMixin, UpdateView):
         return user
     
     def get_success_url(self):
-        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
+        if self.request.user.role == 'client':
+            return reverse_lazy('profile', kwargs={'username': self.request.user.username})
+        else:
+            return reverse_lazy('mentor_profile', kwargs={'username': self.request.user.username})
+    
     
 class ScheduleView(LoginRequiredMixin, TemplateView):
     template_name = 'schedule.html'
