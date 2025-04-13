@@ -16,5 +16,7 @@ urlpatterns = [
     path('booking/<username>', BookingView.as_view(), name='booking'),
     path('edit_bio/<username>', EditBioView.as_view(), name='edit_bio'),
     path('schedule', ScheduleView.as_view(), name='schedule'),
-    path('skillslist', SkillsListView.as_view(), name='skillslist')
+    path('skillslist', SkillsListView.as_view(), name='skillslist'),
+    path('edit_rate/<username>', EditRateView.as_view(), name='edit_rate'),
+    path('add_balance/<username>', AddBalanceView.as_view(), name='add_balance'),
 ]

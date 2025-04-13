@@ -91,6 +91,7 @@
     {% endif %}
     {% if request.user.username == mentor.username %}
         <a href="{% url 'edit_bio' mentor.username %}" class="edit-btn">Edit Bio</a>
+        <a href="{% url 'edit_rate' mentor.username %}" class="edit-btn">Change Hourly Rate</a>
     {% endif %}
     
 {% endblock %}

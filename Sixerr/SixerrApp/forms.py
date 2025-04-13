@@ -46,6 +46,28 @@ class EditBioForm(forms.ModelForm):
         model = User
         fields = ['bio']
 
+class EditRateForm(forms.ModelForm):
+    hourly_rate = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'min': 0, 'step': 0.01}),
+        validators=[MinValueValidator(0)],
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ['hourly_rate']
+
+class AddBalanceForm(forms.ModelForm):
+    balance = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'min': 0, 'step': 0.01}),
+        validators=[MinValueValidator(0)],
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ['balance']
+
 class BookingForm(forms.ModelForm):
     date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'id': 'date', 'min': date.today().strftime('%Y-%m-%d')}),

@@ -11,7 +11,7 @@
     <ul>
         <li><a href="{% url 'mentor_profile' request.user.username %}">Profile</a></li>
         <li><a href="#" class="disabled">Chats</a></li>
-        <li><a href="#" class="disabled">Schedule</a></li>
+        <li><a href="{% url 'schedule' %}">Schedule</a></li>
         <li><a href="{% url 'logout_view' %}">Logout</a></li>
     </ul>
 </div>

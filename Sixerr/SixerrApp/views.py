@@ -237,6 +237,7 @@ class BookingView(LoginRequiredMixin, TemplateView):
             self.request.user.balance = round(self.request.user.balance - booking.price, 2)
             self.request.user.save()
             mentor.popularity += 1
+            mentor.balance = round(mentor.balance + booking.price, 2)
             mentor.save()
             mentor.skill.popularity += 1
             mentor.skill.save()
@@ -274,6 +275,34 @@ class EditBioView(LoginRequiredMixin, UpdateView):
             return reverse_lazy('profile', kwargs={'username': self.request.user.username})
         else:
             return reverse_lazy('mentor_profile', kwargs={'username': self.request.user.username})
+
+class EditRateView(LoginRequiredMixin, UpdateView):
+    form_class = EditRateForm
+    template_name = 'edit_rate.html'
+    login_url = reverse_lazy('login_view')
+    
+    def get_object(self, queryset=None):
+        user = User.objects.get(username=self.kwargs['username'])
+        if user != self.request.user or user.role != 'mentor':
+            raise PermissionDenied
+        return user
+    
+    def get_success_url(self):
+        return reverse_lazy('mentor_profile', kwargs={'username': self.request.user.username})
+
+class AddBalanceView(LoginRequiredMixin, UpdateView):
+    form_class = AddBalanceForm
+    template_name = 'add_balance.html'
+    login_url = reverse_lazy('login_view')
+    
+    def get_object(self, queryset=None):
+        user = User.objects.get(username=self.kwargs['username'])
+        if user != self.request.user or user.role != 'client':
+            raise PermissionDenied
+        return user
+    
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
     
     
 class ScheduleView(LoginRequiredMixin, TemplateView):

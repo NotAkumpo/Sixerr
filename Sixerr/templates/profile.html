@@ -55,6 +55,7 @@
                 <p>{{ user.bio }}</p>
                 {% if request.user.username == user.username %}
                     <a href="{% url 'edit_bio' user.username %}" class="edit-btn">Edit Bio</a>
+                    <a href="{% url 'add_balance' user.username %}" class="edit-btn">Add Balance</a>
                 {% endif %}
             </div>
         </div>
