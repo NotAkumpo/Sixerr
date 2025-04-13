@@ -19,4 +19,5 @@ urlpatterns = [
     path('skillslist', SkillsListView.as_view(), name='skillslist'),
     path('edit_rate/<username>', EditRateView.as_view(), name='edit_rate'),
     path('add_balance/<username>', AddBalanceView.as_view(), name='add_balance'),
+    path('edit_availability', views.add_availability_view, name='edit_availability'),
 ]

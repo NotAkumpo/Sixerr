@@ -215,6 +215,12 @@ class MentorProfileView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get('username')
         context['mentor'] = User.objects.get(username=username)
+        availability = Availability.objects.filter(user=context['mentor'])
+        for a in availability:
+            a.start_time = f"{(a.start_time % 12) if a.start_time not in [0, 12] else 12}:00 {'AM' if a.start_time < 12 else 'PM'}"
+            a.end_time = f"{(a.end_time % 12) if a.end_time not in [12, 24] else 12}:00 {'AM' if a.end_time < 12 or a.end_time == 24 else 'PM'}{' ND' if a.end_time == 24 else ''}"
+        context['availability'] = availability
+
         return context
     
 class BookingView(LoginRequiredMixin, TemplateView):
@@ -320,3 +326,16 @@ class ScheduleView(LoginRequiredMixin, TemplateView):
 
         context['bookings'] = bookings
         return context
+    
+
+def add_availability_view(request):
+    if request.method == 'POST':
+        form = AvailabilityForm(request.POST)
+        if form.is_valid():
+            availability = form.save(commit=False)
+            availability.user = request.user
+            availability.save()
+            return redirect('mentor_profile', username=request.user.username)
+    else:
+        form = AvailabilityForm()
+    return render(request, 'edit_availability.html', {'form': form})

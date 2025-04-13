@@ -79,7 +79,11 @@
                 </div>
                 <div class="info-row">
                     <div class="label">Availability</div>
-                    <div class="value">monday to friday 8am to 5pm weekends 8am to 12pm</div>
+                    <div class="value">
+                        {% for a in availability %}
+                            <p><strong>{{ a.day }}:</strong> {{ a.start_time }} to {{ a.end_time }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

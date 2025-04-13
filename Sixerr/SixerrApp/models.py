@@ -60,3 +60,17 @@ class Booking(models.Model):
     end_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(1), MaxValueValidator(24)])
     price = models.FloatField(null=False, blank=False, default=0.0, validators=[MinValueValidator(0.0)])
     modality = models.CharField(null=False, blank=False, max_length=20, default='onsite')
+
+class Availability(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, related_name='availability')
+    day = models.CharField(choices=[
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday')
+    ], max_length=10, null=False, blank=False)
+    start_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0), MaxValueValidator(23)])
+    end_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(1), MaxValueValidator(24)])
