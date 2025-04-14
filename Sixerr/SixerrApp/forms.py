@@ -97,6 +97,18 @@ class BookingForm(forms.ModelForm):
         fields = ['date', 'start_time', 'end_time', 'modality']
 
 class AvailabilityForm(forms.ModelForm):
+    day = forms.ChoiceField(
+        choices=[
+            ('Monday', 'Monday'),
+            ('Tuesday', 'Tuesday'),
+            ('Wednesday', 'Wednesday'),
+            ('Thursday', 'Thursday'),
+            ('Friday', 'Friday'),
+            ('Saturday', 'Saturday'),
+            ('Sunday', 'Sunday')
+        ],
+        widget=forms.Select(attrs={'id': 'day'})
+    )
     start_time = forms.IntegerField(
         widget=forms.Select(choices=[
             (i, f'{(i % 12) if i not in [0, 12] else 12}:00 {"AM" if i < 12 else "PM"}') for i in range(24)
