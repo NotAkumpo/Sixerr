@@ -17,6 +17,8 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import DeleteView
 from django.shortcuts import get_object_or_404, redirect
+from datetime import date
+from datetime import datetime
 
 # Create your views here.
 
@@ -257,7 +259,7 @@ class BookingView(LoginRequiredMixin, TemplateView):
             mentor.save()
             mentor.skill.popularity += 1
             mentor.skill.save()
-            return redirect('home')
+            return redirect('success_booking')
         
         context = self.get_context_data(**kwargs)
         context['form'] = form
@@ -270,9 +272,21 @@ class BookingView(LoginRequiredMixin, TemplateView):
         context['user'] = self.request.user
         bookings = Booking.objects.filter(mentor=context['mentor'])
         context['bookings'] = json.dumps(list(bookings.values('date', 'start_time', 'end_time')), cls=DjangoJSONEncoder)
+        availabilities = Availability.objects.filter(user=context['mentor'])
+        context['availabilities'] = json.dumps(list(availabilities.values('day', 'start_time', 'end_time')), cls=DjangoJSONEncoder)
         
         context['form'] = BookingForm() or kwargs.get('form')
         return context
+    
+class SuccessBookingView(LoginRequiredMixin, TemplateView):
+    template_name = 'success_booking.html'
+
+    login_url = reverse_lazy('login_view')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.role != 'client':
+            return redirect('mentor_profile', username=request.user.username)
+        return super().dispatch(request, *args, **kwargs)
     
 class EditBioView(LoginRequiredMixin, UpdateView):
     model = User
@@ -332,9 +346,12 @@ class ScheduleView(LoginRequiredMixin, TemplateView):
 
         for booking in bookings:
             booking.start_time = f"{(booking.start_time % 12) if booking.start_time not in [0, 12] else 12}:00 {'AM' if booking.start_time < 12 else 'PM'}"
+            booking.int_end_time = booking.end_time
             booking.end_time = f"{(booking.end_time % 12) if booking.end_time not in [12, 24] else 12}:00 {'AM' if booking.end_time < 12 or booking.end_time == 24 else 'PM'}{' ND' if booking.end_time == 24 else ''}"
 
         context['bookings'] = bookings
+        context['current_date'] = date.today()
+        context['current_hour'] = datetime.now().hour
         return context
     
 class AddAvailabilityView(LoginRequiredMixin, TemplateView):
@@ -374,45 +391,3 @@ def delete_availability(request, availability_id):
         availability.delete()
 
     return redirect('mentor_profile', username=request.user.username)
-
-
-# class BookingView(LoginRequiredMixin, TemplateView):
-#     template_name = 'booking.html'
-
-#     login_url = reverse_lazy('login_view')
-
-#     def post(self, request, *args, **kwargs):
-#         form = BookingForm(request.POST)
-#         username = self.kwargs.get('username')
-#         mentor = User.objects.get(username=username)
-
-#         if form.is_valid():
-#             booking = form.save(commit=False)
-#             booking.client = request.user
-#             booking.mentor = mentor
-#             booking.booking_id = str(booking.client.username) + str(booking.mentor.username) + str(Booking.objects.count())
-#             booking.price = round(mentor.hourly_rate * (booking.end_time - booking.start_time), 2)
-#             booking.save()
-#             self.request.user.balance = round(self.request.user.balance - booking.price, 2)
-#             self.request.user.save()
-#             mentor.popularity += 1
-#             mentor.balance = round(mentor.balance + booking.price, 2)
-#             mentor.save()
-#             mentor.skill.popularity += 1
-#             mentor.skill.save()
-#             return redirect('home')
-        
-#         context = self.get_context_data(**kwargs)
-#         context['form'] = form
-#         return self.render_to_response(context)
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         username = self.kwargs.get('username')
-#         context['mentor'] = User.objects.get(username=username)
-#         context['user'] = self.request.user
-#         bookings = Booking.objects.filter(mentor=context['mentor'])
-#         context['bookings'] = json.dumps(list(bookings.values('date', 'start_time', 'end_time')), cls=DjangoJSONEncoder)
-        
-#         context['form'] = BookingForm() or kwargs.get('form')
-#         return context

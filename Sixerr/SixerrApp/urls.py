@@ -21,4 +21,5 @@ urlpatterns = [
     path('add_balance/<username>', AddBalanceView.as_view(), name='add_balance'),
     path('add_availability', AddAvailabilityView.as_view(), name='add_availability'),\
     path('delete_availability/<int:availability_id>', views.delete_availability, name='delete_availability'),
+    path('booking_success', SuccessBookingView.as_view(), name='success_booking'),
 ]

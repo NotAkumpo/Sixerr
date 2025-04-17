@@ -4,13 +4,24 @@
     <ul>
         {% for booking in bookings %}
             <li>
-                <p><strong>Date:</strong> {{ booking.date }}</p>
+                <p><strong>Date: </strong><span class="booking-date">{{ booking.date }}</span></p>
                 <p><strong>Skill:</strong> {{ booking.mentor.skill }}</p>
                 <p><strong>Mentor:</strong> {{ booking.mentor.first_name }} {{ booking.mentor.last_name }}</p>
                 <p><strong>Client:</strong> {{ booking.client.first_name }} {{ booking.client.last_name }}</p>
                 <p><strong>Time:</strong> {{ booking.start_time }} to {{ booking.end_time }}</p>
                 <p><strong>Modality:</strong> {{ booking.modality }}</p>
                 <p><strong>Price:</strong> ${{ booking.price }}</p>
+                <p><strong>Current Date:</strong> {{ current_date }}</p>
+                {% if user.role == 'client' %}
+                    {% if current_date > booking.date %}
+                            <button>Leave a Review</button>
+                    {% endif %}
+                    {% if current_date == booking.date %}
+                        {% if current_hour > booking.int_end_time %}
+                            <button>Leave a Review</button>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
             </li>
             <hr>
         {% endfor %}

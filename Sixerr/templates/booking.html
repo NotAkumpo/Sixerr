@@ -21,6 +21,7 @@
                         <label>Date of Session</label>
                         {{ form.date }}
                     </div>
+                    <div class ="availabilities-for-day"></div>
                     <div class="booking-for-day"></div>
                     <div class="input-group">
                         <label>Modality</label>
@@ -71,10 +72,14 @@
             const hourlyRate = parseFloat(document.querySelector('.hourly-rate').textContent.trim());
             const runningTotal = document.querySelector('.running-total');
             const bookings = JSON.parse('{{ bookings|safe }}');
+            const availabilities = JSON.parse('{{ availabilities|safe }}');
             let dayBookings = [];
             let startTimes = [];
             let bookedTimes = [];
+            let availableTimes = [];
             let totalPrice = 0;
+            let day = null;
+            let availabilityLimits = [];
         
             startTimeSelect.value = null;
             endTimeSelect.value = null;
@@ -108,11 +113,13 @@
                     if (bookedTimes.includes(i)){
                         continue;
                     }
-                    const option = document.createElement('option');
-                    const formattedTime = formatStartTime(i);
-                    option.value = i;
-                    option.text = formattedTime;
-                    startTimeSelect.add(option);
+                    if (availableTimes.includes(i)){
+                        const option = document.createElement('option');
+                        const formattedTime = formatStartTime(i);
+                        option.value = i;
+                        option.text = formattedTime;
+                        startTimeSelect.add(option);
+                    }
                 }
         
                 startTimeSelect.value = null;
@@ -132,7 +139,7 @@
                 }
         
                 for (let i = startTime; i <= 23; i++){
-                    if (startTimes.includes(i)){
+                    if (startTimes.includes(i) || availabilityLimits.includes(i)){
                         endTimeLimit = i;
                         break;
                     }
@@ -140,11 +147,13 @@
                 
                 for (let i = startTime + 1; i <= 24; i++) {
                     if (i <= endTimeLimit) {
-                        const option = document.createElement('option');
-                        const formattedTime = formatEndTime(i);
-                        option.value = i;
-                        option.text = formattedTime;
-                        endTimeSelect.add(option);
+                        if (availableTimes.includes(i-1)) {
+                            const option = document.createElement('option');
+                            const formattedTime = formatEndTime(i);
+                            option.value = i;
+                            option.text = formattedTime;
+                            endTimeSelect.add(option);
+                        }
                     }
                 }
         
@@ -162,12 +171,14 @@
         
             function returnDate(){
                 let bookingsList = document.querySelector('.booking-for-day');
+                let availabilitiesList = document.querySelector('.availabilities-for-day');
                 if (dateInput.value === "") {
                     endTimeSelect.style.pointerEvents = 'none';
                     endTimeSelect.style.backgroundColor = 'gray';
                     startTimeSelect.style.pointerEvents = 'none';
                     startTimeSelect.style.backgroundColor = 'gray';
                     bookingsList.innerHTML = '';
+                    availabilitiesList.innerHTML = '';
                     submitButton.disabled = true;
                     changeButton.disabled = true;
                     startTimeSelect.value = null;
@@ -182,6 +193,8 @@
                 dayBookings = [];
                 startTimes = [];
                 bookedTimes = [];
+                availableTimes = [];
+                availabilityLimits = [];
                 for (let i = 0; i < bookings.length; i++) {
                     if (bookings[i].date === selectedDate) {
                         dayBookings.push(bookings[i]);
@@ -197,11 +210,31 @@
                 let formattedDate = new Date(selectedDate).toLocaleDateString('en-US', {
                     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
                 });
+
+                day = new Date(selectedDate).toLocaleDateString('en-US', {
+                    weekday: 'long'
+                });
+
+                let availabilities_html = '<h3>Available Times for This Day (' + day + ')</h3>';
+                
+                for (let j = 0; j < availabilities.length; j++) {
+                    if (availabilities[j].day === day) {
+                        availabilityLimits.push(availabilities[j].end_time);
+                        availabilities_html += `<li><strong>Time:</strong> ${formatStartTime(availabilities[j].start_time)} to ${formatEndTime(availabilities[j].end_time)}</li>`;
+                        for (let k = availabilities[j].start_time; k < availabilities[j].end_time; k++){
+                            availableTimes.push(k);
+                        }
+                    }
+                }
+
+                availabilitiesList.innerHTML = availabilities_html;
+
+                console.log(availableTimes);
         
-                let day_bookings_html = '<h3>Unavailable Times for This Day (' + formattedDate + ')</h3>';
+                let day_bookings_html = '<h3>Booked Times for This Day (' + formattedDate + ')</h3>';
         
                 if (dayBookings.length === 0) {
-                    day_bookings_html += '<p>Mentor is available anytime.</p>';
+                    day_bookings_html += '<p>Mentor is free any available time.</p>';
                 }
         
                 for (let j = 0; j < dayBookings.length; j++) {
@@ -250,4 +283,3 @@
     </body>
 </html>
 {% endblock %}
-
