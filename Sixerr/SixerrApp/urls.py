@@ -22,4 +22,6 @@ urlpatterns = [
     path('add_availability', AddAvailabilityView.as_view(), name='add_availability'),\
     path('delete_availability/<int:availability_id>', views.delete_availability, name='delete_availability'),
     path('booking_success', SuccessBookingView.as_view(), name='success_booking'),
+    path('leave_review/<str:booking_id>/', views.leave_review, name='leave_review'),
+    path('delete_booking/<str:booking_id>/', views.delete_booking, name='delete_booking'),
 ]

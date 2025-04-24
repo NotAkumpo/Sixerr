@@ -167,14 +167,18 @@ class MentorListView(LoginRequiredMixin, TemplateView):
         if mentor_search:
             mentors = mentors.filter(first_name__icontains=mentor_search) | mentors.filter(last_name__icontains=mentor_search)
 
-        # Sorting by selected field and order
-        sort_by = self.request.GET.get('sort_by', 'popularity')  # Default to sorting by popularity
-        order = self.request.GET.get('order', 'desc')  # Default to descending order
+         # Validate and apply sorting
+        valid_sort_fields = ['popularity', 'rating', 'hourly_rate']
+        sort_by = self.request.GET.get('sort_by', 'popularity')
+        order = self.request.GET.get('order', 'desc')
+
+        if sort_by not in valid_sort_fields:
+            sort_by = 'popularity'
 
         if order == 'asc':
-            mentors = mentors.order_by(sort_by)  # Ascending order
+            mentors = mentors.order_by(sort_by)
         else:
-            mentors = mentors.order_by('-' + sort_by)  # Descending order
+            mentors = mentors.order_by('-' + sort_by)
 
         # Filtering by popularity, rating, and hourly rate
         popularity = self.request.GET.get('popularity', None)
@@ -260,7 +264,7 @@ class BookingView(LoginRequiredMixin, TemplateView):
             mentor.skill.popularity += 1
             mentor.skill.save()
             return redirect('success_booking')
-        
+
         context = self.get_context_data(**kwargs)
         context['form'] = form
         return self.render_to_response(context)
@@ -268,15 +272,23 @@ class BookingView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get('username')
-        context['mentor'] = User.objects.get(username=username)
-        context['user'] = self.request.user
-        bookings = Booking.objects.filter(mentor=context['mentor'])
+        mentor = User.objects.get(username=username)
+        context['mentor'] = mentor
+        context['user'] = self.request.user  # Ensuring user is in the context
+        
+        # Check if the user has already left a review for this mentor
+        user_reviews_exist = self.request.user.reviews.filter(mentor=mentor).exists()
+        context['user_reviews_exist'] = user_reviews_exist  # Passing the boolean to the context
+
+        # Fetch bookings and availabilities
+        bookings = Booking.objects.filter(mentor=mentor)
         context['bookings'] = json.dumps(list(bookings.values('date', 'start_time', 'end_time')), cls=DjangoJSONEncoder)
-        availabilities = Availability.objects.filter(user=context['mentor'])
+        availabilities = Availability.objects.filter(user=mentor)
         context['availabilities'] = json.dumps(list(availabilities.values('day', 'start_time', 'end_time')), cls=DjangoJSONEncoder)
         
         context['form'] = BookingForm() or kwargs.get('form')
         return context
+
     
 class SuccessBookingView(LoginRequiredMixin, TemplateView):
     template_name = 'success_booking.html'
@@ -391,3 +403,44 @@ def delete_availability(request, availability_id):
         availability.delete()
 
     return redirect('mentor_profile', username=request.user.username)
+
+@login_required
+def delete_booking(request, booking_id):
+    booking = Booking.objects.get(booking_id=booking_id)
+    if booking.client == request.user:
+        booking.delete()
+    return redirect('mentor_list')
+
+@login_required
+def leave_review(request, booking_id):
+    booking = get_object_or_404(Booking, booking_id=booking_id)
+
+    if request.user != booking.client:
+        return redirect('home')
+
+    if request.method == 'POST':
+        review_text = request.POST.get('review_text')
+        rating = int(request.POST.get('rating'))
+
+        # Save the review
+        Review.objects.create(
+            booking=booking,
+            client=request.user,
+            mentor=booking.mentor,
+            rating=rating,
+            review_text=review_text
+        )
+
+        # Update mentor rating
+        mentor = booking.mentor
+        popularity = mentor.popularity
+        current_rating = mentor.rating
+        mentor.popularity += 1
+        mentor.rating = ((popularity - 1 * current_rating) + rating) / popularity
+        mentor.save()
+
+        # Delete the booking after review
+        booking.delete()
+        return redirect('home')
+
+    return render(request, 'leave_review.html', {'booking': booking})

@@ -74,3 +74,13 @@ class Availability(models.Model):
     ], max_length=10, null=False, blank=False)
     start_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(0), MaxValueValidator(23)])
     end_time = models.IntegerField(null=False, blank=False, validators=[MinValueValidator(1), MaxValueValidator(24)])
+
+class Review(models.Model):
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mentor_reviews')
+    rating = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    review_text = models.TextField()
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)  # Link to the booking
+
+    def __str__(self):
+        return f"Review by {self.client} for {self.mentor}"

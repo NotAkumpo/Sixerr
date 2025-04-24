@@ -18,16 +18,30 @@
 
         <form method="get" class="search-container">
             <input type="text" class="search-input" name="mentor_search" placeholder="Search a Mentor" value="{{ request.GET.mentor_search }}">
+            <!-- Keep filters on search -->
+            <input type="hidden" name="sort_by" value="{{ request.GET.sort_by }}">
+            <input type="hidden" name="order" value="{{ request.GET.order }}">
+            <input type="hidden" name="popularity_operator" value="{{ request.GET.popularity_operator }}">
+            <input type="hidden" name="popularity" value="{{ request.GET.popularity }}">
+            <input type="hidden" name="rating_operator" value="{{ request.GET.rating_operator }}">
+            <input type="hidden" name="rating" value="{{ request.GET.rating }}">
+            <input type="hidden" name="hourly_rate_operator" value="{{ request.GET.hourly_rate_operator }}">
+            <input type="hidden" name="hourly_rate" value="{{ request.GET.hourly_rate }}">
             <button type="submit" class="search-button">
                 <img src="{% static 'search-icon.png' %}" alt="Search" class="searchlogo">
             </button>
         </form>
+    
 
-        <!--- Filter ---> 
-        <form method="get" action="{% if skill and skill.skill_name %}{% url 'mentor_list' skill_name=skill.skill_name %}{% else %}{% url 'mentor_list' skill_name='default' %}{% endif %}">
-            <input type="hidden" name="skill_name" value="{{ skill.skill_name|default_if_none:'' }}">
-        
+            <!-- Filters Form -->
+        <form method="get" action="{% url 'mentor_list' skill_name=skill.skill_name|default:'default' %}">
+            <!-- Keep other filters on filter submission -->
+            <input type="hidden" name="mentor_search" value="{{ request.GET.mentor_search }}">
+            <input type="hidden" name="sort_by" value="{{ request.GET.sort_by }}">
+            <input type="hidden" name="order" value="{{ request.GET.order }}">
+
             <div class="filter-row">
+                <!-- Popularity Filter -->
                 <div class="filter-label">Popularity</div>
                 <div class="filter-box">
                     <select name="popularity_operator" class="filter-operator">
@@ -38,9 +52,10 @@
                 <div class="filter-box">
                     <input type="number" name="popularity" step="1" min="0" class="filter-input" value="{{ request.GET.popularity }}">
                 </div>
-        
+
                 <div class="filter-divider"></div>
-    
+
+                <!-- Rating Filter -->
                 <div class="filter-label">Rating</div>
                 <div class="filter-box">
                     <select name="rating_operator" class="filter-operator">
@@ -51,9 +66,10 @@
                 <div class="filter-box">
                     <input type="number" name="rating" step="0.1" min="0" max="5" class="filter-input" value="{{ request.GET.rating }}">
                 </div>
-        
+
                 <div class="filter-divider"></div>
-        
+
+                <!-- Hourly Rate -->
                 <div class="filter-label">Rates</div>
                 <div class="filter-box">
                     <select name="hourly_rate_operator" class="filter-operator">
@@ -64,29 +80,35 @@
                 <div class="filter-box">
                     <input type="number" name="hourly_rate" step="0.01" min="0" class="filter-input" value="{{ request.GET.hourly_rate }}">
                 </div>
-        
+
                 <button type="submit" class="filter-btn">
                     <img src="{% static 'filter-icon.png' %}" alt="Filter" class="filter-icon">
                 </button>
             </div>
         </form>
         
-        <!-- Display Title Mentors -->
-        {% if title %}
-            <h2>{{ title }}</h2>
-        {% endif %}
-
-        <div style="display: flex; align-items: center;">
+        <!-- Results !-->
+        <div style="display: flex; align-items: center; justify-content: space-between;">
             {% if skill %}
                 <h2>Search results for "{{ skill }}"</h2>
+            {% else %}
+                <h2>All Mentors</h2>
             {% endif %}
             <p class="mentor-count">{{ mentors|length }} mentors found</p>
         </div>
         <hr class="mentor-divider">
 
-        <!--- Sort By Section ---> 
-        <form method="get" action="{% if skill and skill.skill_name %}{% url 'mentor_list' skill_name=skill.skill_name %}{% else %}{% url 'mentor_list' skill_name='default' %}{% endif %}">
-            <input type="hidden" name="skill_name" value="{{ skill.skill_name|default_if_none:'' }}">
+        <!-- Sorting -->
+        <form method="get" action="{% url 'mentor_list' skill_name=skill.skill_name|default:'default' %}">
+            <!-- Keep filters in sort form -->
+            <input type="hidden" name="mentor_search" value="{{ request.GET.mentor_search }}">
+            <input type="hidden" name="popularity_operator" value="{{ request.GET.popularity_operator }}">
+            <input type="hidden" name="popularity" value="{{ request.GET.popularity }}">
+            <input type="hidden" name="rating_operator" value="{{ request.GET.rating_operator }}">
+            <input type="hidden" name="rating" value="{{ request.GET.rating }}">
+            <input type="hidden" name="hourly_rate_operator" value="{{ request.GET.hourly_rate_operator }}">
+            <input type="hidden" name="hourly_rate" value="{{ request.GET.hourly_rate }}">
+
             <div class="sort-by-row">
                 <div class="sort-by-label">Sort By</div>
                 <div class="sort-by-box">
@@ -96,8 +118,6 @@
                         <option value="hourly_rate" {% if request.GET.sort_by == "hourly_rate" %}selected{% endif %}>Rates</option>
                     </select>
                 </div>
-
-                <div class="sort-by-divider"></div>
 
                 <div class="sort-by-label">Order</div>
                 <div class="sort-by-box">

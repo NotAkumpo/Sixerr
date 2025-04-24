@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import *
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date
+from .models import Review
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -127,3 +128,12 @@ class AvailabilityForm(forms.ModelForm):
     class Meta:
         model = Availability
         fields = ['day', 'start_time', 'end_time']
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'review_text']
+        widgets = {
+            'rating': forms.NumberInput(attrs={'step': '0.1', 'min': '0', 'max': '5'}),
+            'review_text': forms.Textarea(attrs={'rows': 4, 'cols': 50}),
+        }

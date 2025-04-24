@@ -12,14 +12,30 @@
                 <p><strong>Modality:</strong> {{ booking.modality }}</p>
                 <p><strong>Price:</strong> ${{ booking.price }}</p>
                 <p><strong>Current Date:</strong> {{ current_date }}</p>
-                {% if user.role == 'client' %}
-                    {% if current_date > booking.date %}
+
+                {% if current_date > booking.date %}
+                    {% if not booking.review_set.exists %}
+                        <a href="{% url 'leave_review' booking_id=booking.booking_id %}">
                             <button>Leave a Review</button>
+                        </a>
+                    {% else %}
+                        <form method="post" action="{% url 'delete_booking' booking_id=booking.booking_id %}">
+                            {% csrf_token %}
+                            <button type="submit">Delete Booking</button>
+                        </form>
                     {% endif %}
-                    {% if current_date == booking.date %}
-                        {% if current_hour > booking.int_end_time %}
+
+                {% elif current_date == booking.date and current_hour > booking.int_end_time %}
+
+                    {% if not booking.review_set.exists %}
+                        <a href="{% url 'leave_review' booking_id=booking.booking_id %}">
                             <button>Leave a Review</button>
-                        {% endif %}
+                        </a>
+                    {% else %}
+                        <form method="post" action="{% url 'delete_booking' booking_id=booking.booking_id %}">
+                            {% csrf_token %}
+                            <button type="submit">Delete Booking</button>
+                        </form>
                     {% endif %}
                 {% endif %}
             </li>
