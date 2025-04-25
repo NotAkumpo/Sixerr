@@ -11,7 +11,7 @@
     <head>
         <meta charset="utf-8">
         <title>Mentor Profile</title>
-        <link rel="stylesheet" href="{% static 'css/mentor_profile.css' %}?v=12.0">
+        <link rel="stylesheet" href="{% static 'css/mentor_profile.css' %}?v=14.0">
         <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
     </head>
 
@@ -46,7 +46,9 @@
             </div>
             
         </div>
+        
     </div>
+    <a href="{% url 'mentor_reviews' username=mentor.username %}" class="see-btn">See all reviews</a>
 
     <hr class="divider">
 
@@ -119,7 +121,7 @@
     {% if request.user.role == 'client' %}
         <a href="{% url 'booking' mentor.username %}" class="book-btn">Book a Session</a>
     {% endif %}
-    <a href="{% url 'mentor_reviews' username=mentor.username %}">See all reviews</a>
+    <!-- <a href="{% url 'mentor_reviews' username=mentor.username %}">See all reviews</a> -->
 
   
     <!-- {% if request.user.username == mentor.username %}

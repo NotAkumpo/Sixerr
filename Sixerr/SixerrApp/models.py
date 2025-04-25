@@ -80,7 +80,7 @@ class Review(models.Model):
     mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mentor_reviews')
     rating = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     review_text = models.TextField()
-    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)  # Link to the booking
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE) 
 
     def __str__(self):
         return f"Review by {self.client} for {self.mentor}"

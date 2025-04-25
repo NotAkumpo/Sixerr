@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  body {
+    font-family: 'GI', sans-serif;
+    background-color: white;
+    color: #333;
+    margin: 0;
+  }
+  
+  .page-content {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-family: 'GI', sans-serif;
+    color: #1d2b8a;
+    text-align: center;
+    font-size: 30px;
+    margin-top: 3%;
+  }
+  
+  .reviews-list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .review-card {
+    background-color: #f0f0f0;
+    border-radius: 16px;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    transition: transform 0.2s ease;
+  }
+  
+  .review-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .review-card p {
+    margin: 6px 0;
+  }
+  
+  .no-reviews {
+    text-align: center;
+    margin-top: 3%;
+  }
+  

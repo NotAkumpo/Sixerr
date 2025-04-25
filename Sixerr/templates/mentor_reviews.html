@@ -1,22 +1,29 @@
-<!doctype html>
-
+<!DOCTYPE html>
 {% load static %}
 <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mentor Reviews</title>
+  <link rel="stylesheet" href="{% static 'css/mentor_reviews.css' %}?v=1.0">
+</head>
+<body>
+  <div class="page-content">
+    <h1>Reviews for {{ mentor.first_name }} {{ mentor.last_name }}</h1>
 
-{% block content %}
-  <h1>Reviews for {{ mentor.first_name }} {{ mentor.last_name }}</h1>
-
-  {% if reviews %}
-    <ul>
-      {% for review in reviews %}
-        <li>
-          <strong>{{ review.client.username }}</strong> (Rating: {{ review.rating }})
-          <p>{{ review.review_text }}</p>
-          <small>Reviewed on: {{ review.created_at }}</small>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No reviews available.</p>
-  {% endif %}
-{% endblock %}
+    {% if reviews %}
+      <ul class="reviews-list">
+        {% for review in reviews %}
+          <li class="review-card">
+            <p><strong>{{ review.client.username }}</strong> rated {{ review.rating }}/5</p>
+            <p>{{ review.review_text }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="no-reviews">
+        <p>No reviews available for this mentor.</p>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

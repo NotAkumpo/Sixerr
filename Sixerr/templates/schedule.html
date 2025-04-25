@@ -39,7 +39,7 @@
                                 {% else %}
                                     <form method="post" action="{% url 'delete_booking' booking_id=booking.booking_id %}">
                                         {% csrf_token %}
-                                        <button type="submit">Delete Booking</button>
+                                        <button>Delete Booking</button>
                                     </form>
                                 {% endif %}
                             
@@ -52,7 +52,7 @@
                                 {% else %}
                                     <form method="post" action="{% url 'delete_booking' booking_id=booking.booking_id %}">
                                         {% csrf_token %}
-                                        <button type="submit">Delete Booking</button>
+                                        <button>Delete Booking</button>
                                     </form>
                                 {% endif %}
                             {% endif %}

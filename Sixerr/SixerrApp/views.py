@@ -19,6 +19,7 @@ from django.views.generic.edit import DeleteView
 from django.shortcuts import get_object_or_404, redirect
 from datetime import date
 from datetime import datetime
+from django.db.models import Avg
 
 # Create your views here.
 
@@ -131,6 +132,7 @@ def skill_add_view(request):
     else:
         form = SkillForm()
     return render(request, 'skill_add.html', {'form': form})
+
 
 class MentorListView(LoginRequiredMixin, TemplateView):
     template_name = 'mentor_list.html'
@@ -360,6 +362,7 @@ class ScheduleView(LoginRequiredMixin, TemplateView):
             booking.start_time = f"{(booking.start_time % 12) if booking.start_time not in [0, 12] else 12}:00 {'AM' if booking.start_time < 12 else 'PM'}"
             booking.int_end_time = booking.end_time
             booking.end_time = f"{(booking.end_time % 12) if booking.end_time not in [12, 24] else 12}:00 {'AM' if booking.end_time < 12 or booking.end_time == 24 else 'PM'}{' ND' if booking.end_time == 24 else ''}"
+            booking.has_review = Review.objects.filter(booking=booking, client=self.request.user).exists()
 
         context['bookings'] = bookings
         context['current_date'] = date.today()
@@ -429,6 +432,7 @@ def delete_booking(request, booking_id):
         booking.delete()
     return redirect('mentor_list')
 
+
 @login_required
 def leave_review(request, booking_id):
     booking = get_object_or_404(Booking, booking_id=booking_id)
@@ -450,12 +454,19 @@ def leave_review(request, booking_id):
         )
 
         # Update mentor rating
+        # mentor = booking.mentor
+        # average = Review.objects.filter(mentor=mentor).aggregate(Avg('rating'))['rating__avg'] or 0
+
+        # mentor.rating = round(average, 2)
+        # mentor.save()
         mentor = booking.mentor
-        popularity = mentor.popularity
-        current_rating = mentor.rating
-        mentor.popularity += 1
-        mentor.rating = ((popularity - 1 * current_rating) + rating) / popularity
-        mentor.save()
+        reviews = Review.objects.filter(mentor=mentor)
+        total_reviews = reviews.count()
+        total_rating = sum([rev.rating for rev in reviews])
+
+        if total_reviews > 0:
+            mentor.rating = total_rating / total_reviews
+            mentor.save()
 
         # Delete the booking after review
         booking.delete()
