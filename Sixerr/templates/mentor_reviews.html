@@ -1,0 +1,22 @@
+<!doctype html>
+
+{% load static %}
+<html lang="en">
+
+{% block content %}
+  <h1>Reviews for {{ mentor.first_name }} {{ mentor.last_name }}</h1>
+
+  {% if reviews %}
+    <ul>
+      {% for review in reviews %}
+        <li>
+          <strong>{{ review.client.username }}</strong> (Rating: {{ review.rating }})
+          <p>{{ review.review_text }}</p>
+          <small>Reviewed on: {{ review.created_at }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No reviews available.</p>
+  {% endif %}
+{% endblock %}

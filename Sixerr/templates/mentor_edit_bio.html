@@ -1,5 +1,3 @@
-
-
 <!doctype html>
 
 {% load static %}
@@ -7,15 +5,15 @@
 {% block content %}
     <head>
         <meta charset="utf-8">
-        <title>Edit Rate</title>
-        <link rel="stylesheet" href="{% static 'css/editrate.css' %}?v=3.0">
+        <title>Edit Bio</title>
+        <link rel="stylesheet" href="{% static 'css/mentoreditbio.css' %}?v=3.0">
         <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
     </head>
     
     <body>
         <div class="center-wrapper">
             <div class="form-container">
-                <h2>Edit Rate</h2>
+                <h2>Edit Your Bio</h2>
                 <form method="POST">
                     {% csrf_token %}
                     {{ form.as_p }}

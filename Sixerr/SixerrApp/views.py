@@ -394,7 +394,25 @@ class AddAvailabilityView(LoginRequiredMixin, TemplateView):
         context['availabilities'] = json.dumps(list(availabilities.values('day', 'start_time', 'end_time')), cls=DjangoJSONEncoder)
         context['form'] = AvailabilityForm() or kwargs.get('form')
         return context
-    
+
+class MentorReviewsView(LoginRequiredMixin, TemplateView):
+    template_name = 'mentor_reviews.html'
+
+    login_url = reverse_lazy('login_view')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        mentor = User.objects.get(username=username)
+
+        reviews = Review.objects.filter(mentor=mentor)
+
+        context['mentor'] = mentor
+        context['reviews'] = reviews
+
+        return context
+
+
 @login_required
 def delete_availability(request, availability_id):
     availability = get_object_or_404(Availability, id=availability_id)

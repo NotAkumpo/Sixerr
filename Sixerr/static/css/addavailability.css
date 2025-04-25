@@ -1,0 +1,83 @@
+@font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GI';
+    src: url('../font/GlacialIndifference-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body h2, .my-heading {
+    color: #1d2b8a;
+    margin: 5% auto;
+    font-size: 29px !important;
+    font-family: 'GI';
+    text-align: center;
+}
+
+.center-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    padding-top: 40px;
+}
+
+.form-container {
+    text-align: center;
+    font-family: 'GI';
+    width: 60%;
+    max-width: 600px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form p {
+    width: 100%;
+    font-family: 'GI';
+    font-size: 16px;
+    text-align: center;
+}
+
+form textarea,
+form select,
+form input[type="text"],
+form input[type="number"] {
+    width: 100%;
+    font-family: 'GI';
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.submit-button, .change-button {
+    font-weight: normal;
+    font-family: 'GI';
+    width: fit-content;
+    padding: 8px 16px;
+    background-color: #1d2b8a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 10px auto;
+    text-align: center;
+    text-decoration: none;
+}
+
+.change-button {
+    background-color: #555; 
+}

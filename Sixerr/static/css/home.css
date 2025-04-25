@@ -135,13 +135,18 @@ div {
 .submit-btn {
     font-weight: normal;
     font-family: 'GI';
-    width: 100%;
-    padding: 10px;
+    width: 8%;
+    padding: 8px;
     background-color: #1d2b8a;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 17px;
     cursor: pointer;
-    font-size: 16px;
-    margin: 10px auto 0 auto;
+    font-size: 14px;
+    margin-top: 15px;
+    margin-bottom: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    text-decoration: none;
 }

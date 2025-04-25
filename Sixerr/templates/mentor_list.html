@@ -7,7 +7,7 @@
     <head>
         <meta charset="utf-8">
         <title>Mentor List</title>
-        <link rel="stylesheet" href="{% static 'css/mentor_list.css' %}?v=.0">
+        <link rel="stylesheet" href="{% static 'css/mentor_list.css' %}">
     </head>
 
     <body>
@@ -94,7 +94,7 @@
             {% else %}
                 <h2>All Mentors</h2>
             {% endif %}
-            <p class="mentor-count">{{ mentors|length }} mentors found</p>
+            <p class="mentor-count">{{ mentors|length }} mentor/s found</p>
         </div>
         <hr class="mentor-divider">
 
@@ -109,28 +109,30 @@
             <input type="hidden" name="hourly_rate_operator" value="{{ request.GET.hourly_rate_operator }}">
             <input type="hidden" name="hourly_rate" value="{{ request.GET.hourly_rate }}">
 
-            <div class="sort-by-row">
-                <div class="sort-by-label">Sort By</div>
-                <div class="sort-by-box">
-                    <select name="sort_by" class="sort-by-operator">
+            <div class="filter-row sort-section">
+                <div class="filter-label">Sort by</div>
+                <div class="filter-box">
+                    <select name="sort_by" class="sort-operator">
                         <option value="popularity" {% if request.GET.sort_by == "popularity" %}selected{% endif %}>Popularity</option>
                         <option value="rating" {% if request.GET.sort_by == "rating" %}selected{% endif %}>Rating</option>
                         <option value="hourly_rate" {% if request.GET.sort_by == "hourly_rate" %}selected{% endif %}>Rates</option>
                     </select>
                 </div>
+                
+                <div class="filter-divider"></div>
 
-                <div class="sort-by-label">Order</div>
-                <div class="sort-by-box">
-                    <select name="order" class="sort-by-operator">
+                <div class="filter-label">Order</div>
+                <div class="filter-box">
+                    <select name="order" class="sort-operator">
                         <option value="desc" {% if request.GET.order == "desc" or not request.GET.order %}selected{% endif %}>Descending</option>
                         <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>Ascending</option>
                     </select>
                 </div>
 
-                <button type="submit" class="sort-btn">
-                    <img src="{% static 'sort-icon.png' %}" alt="Sort" class="sort-icon">
-                </button>
+                <button class="sort-btn">Sort</button>
             </div>
+
+                
         </form>
 
         <!-- <ul>

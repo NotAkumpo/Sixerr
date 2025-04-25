@@ -11,7 +11,7 @@
     <head>
         <meta charset="utf-8">
         <title>Mentor Profile</title>
-        <link rel="stylesheet" href="{% static 'css/mentor_profile.css' %}?v=5.0">
+        <link rel="stylesheet" href="{% static 'css/mentor_profile.css' %}?v=12.0">
         <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
     </head>
 
@@ -64,6 +64,9 @@
                     <div class="value">{{ mentor.bio|linebreaksbr }}</div>
                 </div>
             </div>
+            {% if request.user.username == mentor.username %}
+                <a href="{% url 'edit_bio' mentor.username %}" class="edit-btn">Edit Bio</a>
+            {% endif %}
         </div>
     
         <div class="mentor-section-container">
@@ -79,40 +82,48 @@
                 </div>
                 <div class="info-row">
                     <div class="label">Availability</div>
-                    <div>
-                        {% if availability %}
-                            {% for a in availability %}
-                                <li>
-                                    <strong>{{ a.day }}:</strong> {{ a.start_time }} to {{ a.end_time }}
-                                    {% if request.user.username == mentor.username %}
-                                        <form method="post" action="{% url 'delete_availability' a.id %}" style="display:inline;">
-                                            {% csrf_token %}
-                                            <button type="submit" onclick="return confirm('Are you sure you want to delete this availability?')">Delete</button>
-                                        </form>
-                                    {% endif %}
-                                </li>
-                                <hr>
-                            {% endfor %}
-                        {% else %}
-                            <p>Mentor is currently unavailable.</p>
-                        {% endif %}
+                    <div class="value">
+                      {% if availability %}
+                        <ul class="availability-list">
+                          {% for a in availability %}
+                            <li>
+                              {{ a.day }}: {{ a.start_time }} to {{ a.end_time }}
+                              {% if request.user.username == mentor.username %}
+                                <form method="post" action="{% url 'delete_availability' a.id %}" style="display:inline;">
+                                  {% csrf_token %}
+                                  <button type="submit" onclick="return confirm('Are you sure you want to delete this availability?')">Delete</button>
+                                </form>
+                              {% endif %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <div>Mentor is currently unavailable.</div>
+                      {% endif %}
                     </div>
-                </div>
+                  </div>
+                  
                 {% if request.user.username == mentor.username %}
-                    <a href="{% url 'add_availability' %}">Add Available Day and Time</a>
+                    <a href="{% url 'add_availability' %}" class = "add">Add Available Day and Time</a>
                 {% endif %}
             </div>
+            {% if request.user.username == mentor.username %}
+                <!-- <a href="{% url 'edit_bio' mentor.username %}" class="edit-btn">Edit Bio</a> -->
+                <a href="{% url 'edit_rate' mentor.username %}" class="change-btn">Change Hourly Rate</a>
+            {% endif %}
+
         </div>
-    
+        
     </div>
-    {% if availability %}
-        {% if request.user.role == 'client' %}
-            <a href="{% url 'booking' mentor.username %}" class="book-btn">Book a Session</a>
-        {% endif %}
+   
+    {% if request.user.role == 'client' %}
+        <a href="{% url 'booking' mentor.username %}" class="book-btn">Book a Session</a>
     {% endif %}
-    {% if request.user.username == mentor.username %}
-        <a href="{% url 'edit_bio' mentor.username %}" class="edit-btn">Edit Bio</a>
-        <a href="{% url 'edit_rate' mentor.username %}" class="edit-btn">Change Hourly Rate</a>
-    {% endif %}
+    <a href="{% url 'mentor_reviews' username=mentor.username %}">See all reviews</a>
+
+  
+    <!-- {% if request.user.username == mentor.username %}
+        <a href="{% url 'edit_rate' mentor.username %}" class="change-btn">Change Hourly Rate</a>
+    {% endif %} -->
     
 {% endblock %}

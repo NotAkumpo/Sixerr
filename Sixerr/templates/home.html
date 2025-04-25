@@ -23,6 +23,10 @@
                 </button>
             </div>
         </form>
+
+        <form action="{% url 'skillslist' %}" class="login-form">
+            <button class="submit-btn">View All Skills</button>
+        </form>
         
         <h2 class="my-heading">Popular Skills</h2>
         
@@ -50,9 +54,9 @@
             {% endfor %}
         </div> -->
 
-        <form action="{% url 'skillslist' %}" class="login-form">
+        <!-- <form action="{% url 'skillslist' %}" class="login-form">
             <button class="submit-btn">See all skills</button>
-        </form>
+        </form> -->
 
     </body>
 {% endblock %}

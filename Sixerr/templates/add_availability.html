@@ -1,133 +1,153 @@
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="submit-button">Add Availability</button>
-</form>
-    <button class="change-button">Pick a Different Time</button>
-
-<script>
-    const daySelect = document.getElementById('day');
-    const endTimeSelect = document.getElementById('end-time');
-    const startTimeSelect = document.getElementById('start-time');
-    const changeButton = document.querySelector('.change-button');
-    const submitButton = document.querySelector('.submit-button');
-    const availabilities = JSON.parse('{{ availabilities|safe }}');
-    let startTimes = [];
-    let bookedTimes = [];
+<!doctype html>
+{% load static %}
+<html lang="en">
+{% block content %}
+    <head>
+        <meta charset="utf-8">
+        <title>Add Availability</title>
+        <link rel="stylesheet" href="{% static 'css/addavailability.css' %}?v=3.0">
+        <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
+    </head>
     
-    startTimeSelect.value = null;
-    endTimeSelect.value = null;
-    daySelect.value = null;
-    submitButton.disabled = true;
-    changeButton.disabled = true;
+    <body>
+        <div class="center-wrapper">
+            <div class="form-container">
+                <h2>Add Availability</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="submit-button">Add Availability</button>
+                </form>
+                    <button class="change-button">Pick a Different Time</button>
 
-    startTimeSelect.style.pointerEvents = 'none';
-    startTimeSelect.style.backgroundColor = 'gray';
-    endTimeSelect.style.pointerEvents = 'none';
-    endTimeSelect.style.backgroundColor = 'gray';
+                <script>
+                    const daySelect = document.getElementById('day');
+                    const endTimeSelect = document.getElementById('end-time');
+                    const startTimeSelect = document.getElementById('start-time');
+                    const changeButton = document.querySelector('.change-button');
+                    const submitButton = document.querySelector('.submit-button');
+                    const availabilities = JSON.parse('{{ availabilities|safe }}');
+                    let startTimes = [];
+                    let bookedTimes = [];
+                    
+                    startTimeSelect.value = null;
+                    endTimeSelect.value = null;
+                    daySelect.value = null;
+                    submitButton.disabled = true;
+                    changeButton.disabled = true;
 
-    function formatStartTime(i){
-        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 0 ) ? "AM" : "PM")
-    }
+                    startTimeSelect.style.pointerEvents = 'none';
+                    startTimeSelect.style.backgroundColor = 'gray';
+                    endTimeSelect.style.pointerEvents = 'none';
+                    endTimeSelect.style.backgroundColor = 'gray';
 
-    function formatEndTime(i){
-        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 24 ) ? "AM" : "PM") + (i === 24 ? " ND" : "")
-    }
+                    function formatStartTime(i){
+                        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 0 ) ? "AM" : "PM")
+                    }
 
-    function filterStarttime(){
-        startTimeSelect.style.pointerEvents = 'auto';
-        startTimeSelect.style.backgroundColor = '';
+                    function formatEndTime(i){
+                        return (i % 12 === 0 ? 12 : i % 12) + ":00 " + ((i < 12 || i === 24 ) ? "AM" : "PM") + (i === 24 ? " ND" : "")
+                    }
 
-        submitButton.disabled = true;
-        changeButton.disabled = true;
+                    function filterStarttime(){
+                        startTimeSelect.style.pointerEvents = 'auto';
+                        startTimeSelect.style.backgroundColor = '';
 
-        while (startTimeSelect.options.length) {
-            startTimeSelect.remove(0);
-        }
+                        submitButton.disabled = true;
+                        changeButton.disabled = true;
 
-        for (let i = 0; i <= 23; i++) {
-            if (bookedTimes.includes(i)){
-                continue;
-            }
-            const option = document.createElement('option');
-            const formattedTime = formatStartTime(i);
-            option.value = i;
-            option.text = formattedTime;
-            startTimeSelect.add(option);
-        }
+                        while (startTimeSelect.options.length) {
+                            startTimeSelect.remove(0);
+                        }
 
-        startTimeSelect.value = null;
-    }
+                        for (let i = 0; i <= 23; i++) {
+                            if (bookedTimes.includes(i)){
+                                continue;
+                            }
+                            const option = document.createElement('option');
+                            const formattedTime = formatStartTime(i);
+                            option.value = i;
+                            option.text = formattedTime;
+                            startTimeSelect.add(option);
+                        }
 
-    function filterEndtime(){
-        const startTime = parseInt(document.getElementById('start-time').value);
-        const endTime = parseInt(document.getElementById('end-time').value);
-        endTimeSelect.style.pointerEvents = 'auto';
-        endTimeSelect.style.backgroundColor = '';
-        startTimeSelect.style.pointerEvents = 'none';
-        startTimeSelect.style.backgroundColor = 'gray';
-        var endTimeLimit = 24;
+                        startTimeSelect.value = null;
+                    }
 
-        while (endTimeSelect.options.length) {
-            endTimeSelect.remove(0);
-        }
+                    function filterEndtime(){
+                        const startTime = parseInt(document.getElementById('start-time').value);
+                        const endTime = parseInt(document.getElementById('end-time').value);
+                        endTimeSelect.style.pointerEvents = 'auto';
+                        endTimeSelect.style.backgroundColor = '';
+                        startTimeSelect.style.pointerEvents = 'none';
+                        startTimeSelect.style.backgroundColor = 'gray';
+                        var endTimeLimit = 24;
 
-        for (let i = startTime; i <= 23; i++){
-            if (startTimes.includes(i)){
-                endTimeLimit = i;
-                break;
-            }
-        }
-        
-        for (let i = startTime + 1; i <= 24; i++) {
-            if (i <= endTimeLimit) {
-                const option = document.createElement('option');
-                const formattedTime = formatEndTime(i);
-                option.value = i;
-                option.text = formattedTime;
-                endTimeSelect.add(option);
-            }
-        }
+                        while (endTimeSelect.options.length) {
+                            endTimeSelect.remove(0);
+                        }
 
-        endTimeSelect.value = null;
-        // console.log(bookings);
-    }
+                        for (let i = startTime; i <= 23; i++){
+                            if (startTimes.includes(i)){
+                                endTimeLimit = i;
+                                break;
+                            }
+                        }
+                        
+                        for (let i = startTime + 1; i <= 24; i++) {
+                            if (i <= endTimeLimit) {
+                                const option = document.createElement('option');
+                                const formattedTime = formatEndTime(i);
+                                option.value = i;
+                                option.text = formattedTime;
+                                endTimeSelect.add(option);
+                            }
+                        }
 
-    function clearTime(){
-        endTimeSelect.style.pointerEvents = 'none';
-        endTimeSelect.style.backgroundColor = 'gray';
-        endTimeSelect.value = null;
-        filterStarttime();
-    }
+                        endTimeSelect.value = null;
+                        // console.log(bookings);
+                    }
 
-    function returnDay(){
-        startTimeSelect.style.pointerEvents = 'auto';
-        startTimeSelect.style.backgroundColor = '';
-        endTimeSelect.style.pointerEvents = 'none';
-        endTimeSelect.style.backgroundColor = 'gray';
-        const selectedDay = daySelect.value;
-        startTimes = [];
-        bookedTimes = [];
-        for (let i = 0; i < availabilities.length; i++) {
-            if (availabilities[i].day === selectedDay) {
-                startTimes.push(availabilities[i].start_time);
-                for (let j = availabilities[i].start_time; j < availabilities[i].end_time; j++){
-                    bookedTimes.push(j);
-                }
-            }
-        }
+                    function clearTime(){
+                        endTimeSelect.style.pointerEvents = 'none';
+                        endTimeSelect.style.backgroundColor = 'gray';
+                        endTimeSelect.value = null;
+                        filterStarttime();
+                    }
 
-        filterStarttime();
-        endTimeSelect.value = null;
-    }
+                    function returnDay(){
+                        startTimeSelect.style.pointerEvents = 'auto';
+                        startTimeSelect.style.backgroundColor = '';
+                        endTimeSelect.style.pointerEvents = 'none';
+                        endTimeSelect.style.backgroundColor = 'gray';
+                        const selectedDay = daySelect.value;
+                        startTimes = [];
+                        bookedTimes = [];
+                        for (let i = 0; i < availabilities.length; i++) {
+                            if (availabilities[i].day === selectedDay) {
+                                startTimes.push(availabilities[i].start_time);
+                                for (let j = availabilities[i].start_time; j < availabilities[i].end_time; j++){
+                                    bookedTimes.push(j);
+                                }
+                            }
+                        }
 
-    daySelect.addEventListener('change', returnDay);
-    startTimeSelect.addEventListener('change', filterEndtime);
-    endTimeSelect.addEventListener('change', function() {
-        endTimeSelect.style.pointerEvents = 'none';
-        endTimeSelect.style.backgroundColor = 'gray';
-        submitButton.disabled = false;
-        changeButton.disabled = false;
-    });
-    changeButton.addEventListener('click', clearTime);
-</script>
+                        filterStarttime();
+                        endTimeSelect.value = null;
+                    }
+
+                    daySelect.addEventListener('change', returnDay);
+                    startTimeSelect.addEventListener('change', filterEndtime);
+                    endTimeSelect.addEventListener('change', function() {
+                        endTimeSelect.style.pointerEvents = 'none';
+                        endTimeSelect.style.backgroundColor = 'gray';
+                        submitButton.disabled = false;
+                        changeButton.disabled = false;
+                    });
+                    changeButton.addEventListener('click', clearTime);
+                </script>
+            </div>
+        </div>
+    </body>
+
+{% endblock %}

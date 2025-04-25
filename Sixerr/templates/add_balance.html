@@ -1,5 +1,29 @@
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+<!doctype html>
+
+{% load static %}
+<html lang="en">
+{% block content %}
+    <head>
+        <meta charset="utf-8">
+        <title>Edit Balance</title>
+        <link rel="stylesheet" href="{% static 'css/addbalance.css' %}?v=4.0">
+        <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
+    </head>
+    
+    <body>
+        <div class="center-wrapper">
+            <div class="form-container">
+                <h2>Edit Balance</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="edit-btn">Save</button>
+                </form>
+            </div>
+        </div>
+    </body>
+    
+ 
+    
+
+{% endblock %}

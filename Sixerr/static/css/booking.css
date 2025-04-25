@@ -13,17 +13,17 @@
 }
 
 body {
-    background-color: #1d2b8a;
-    font-family: 'GI';
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100vh;
+    flex-direction: column; /* So the nav bar is on top */
+    align-items: center;    /* This centers your content horizontally */
+    background-color: #1d2e94;
     margin: 0;
-    padding-top: 50px; 
+    padding: 0;
 }
 .container {
     text-align: center;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .rectangle {
@@ -135,8 +135,18 @@ input, select {
     color: #16257a;
     line-height: 0.6;
     margin-bottom: 5px;
+    line-height: 1.2;
 }
 
+.availabilities-for-day {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #16257a;
+    line-height: 0.6;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
 
 .input-group-last {
     width: 100%;

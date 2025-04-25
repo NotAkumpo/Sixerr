@@ -1,14 +1,20 @@
 <!doctype html>
 {% load static %}
 <html lang="en">
-{% block content %}
 
     <head>
         <meta charset="UTF-8">
         <title>Book a Session</title>
-        <link rel="stylesheet" href="{% static 'css/booking.css' %}">
+        <link rel="stylesheet" href="{% static 'css/booking.css' %}?v=12.0">
+        <link rel="icon" type="image/png" href="{%  static 'logoIcon.ico' %}">
     </head>
     <body>
+        {% if request.user.role == 'mentor' %}
+            {% include 'mentor_taskbar.html' %}
+        {% else %}
+            {% include 'taskbar.html' %}
+        {% endif %}
+        {% block content %}
         <div class="container">
             <div class="rectangle">
                 <h2>Available Sessions and Booking</h2>
@@ -278,6 +284,6 @@
             changeButton.addEventListener('click', clearTime);
         
         </script>
+        {% endblock %}
     </body>
 </html>
-{% endblock %}
