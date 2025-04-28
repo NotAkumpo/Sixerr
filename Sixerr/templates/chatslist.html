@@ -4,84 +4,89 @@
 <html lang="en">
 {% block content %}
 
-    <head>
-        <meta charset="utf-8">
-        <title>Home Screen</title>
-        <link rel="stylesheet" href="{% static 'css/home.css' %}?v=1.0">
+<head>
+    <meta charset="utf-8">
+    <title>Inbox</title>
+    <link rel="stylesheet" href="{% static 'css/chatlist.css' %}?v=2.0">
+</head>
 
-    </head>
+<body>
+    <form action="{% url 'home' %}">
+      <button class="back-btn">Back to Home</button>
+    </form>
+    <img src="{% static 'fullLogoWhite3-remove.png' %}" alt="Logo" class="fulllogo">
 
-    <body>
-      <!-- <h1>Sixerr.</h1> -->
-      <img src="{% static 'fullLogoWhite3.png' %}" alt="logo" class="fulllogo">
-
-      <!-- <form method="get">
-        <div class="search-container">
-            <input type="text" class="search-input" name="user_search" placeholder="Search for a user" value="{{ request.GET.user_search }}">
-            <button class="search-button">
-                <img src="{% static 'search-icon.png' %}" alt="Search" class="searchlogo">
-            </button>
-        </div>
-      </form>
-
-      <div>
-          {% for u in users %}
-          <form method="get">
-            <button type="submit" name="user_chat" value={{u}} >{{ u }}</button>
-          </form>
-          {% endfor %}
-      </div>
-
-      <div>
-        {% if current_chat %}
-          {{ current_chat }}
-          {% for m in current_messages %}
-            {{ m.sender.username }}: {{ m.content }}
-          {% endfor %}
-        {% else %}
-          There's no messages here.
-        {% endif %}
-      </div> -->
-
-      <div class="input-group">
+    <!-- <div class="input-group">
         <form method="GET">
-          Filter by:
+            <label for="message_type">Filter by:</label>
             <select name="message_type" id="message_type" class="dropdown">
-              <option value="all">all</option>
-              <option value="sent">sent</option>
-              <option value="received">recieved</option>
+                <option value="all">All</option>
+                <option value="sent">Sent</option>
+                <option value="received">Received</option>
             </select>
-            <button class="submit-btn">Send</button>
+            <button class="submit-btn">Filter</button>
         </form>
-      </div>
+    </div> -->
 
-      <div>
-        Messages:
-        {% for m in messages %}
-          Sender: {{ m.sender }}, Receiver: {{ m.receiver }} <br>
-          {{ m.content }} <br><br>
-        {% endfor %}
-      </div>
-
-      <form action="{% url 'create-message' %}" method="POST">
-        Send a new message:<br>
-        {% csrf_token %}
-        Recipient:
-          <select name="receiver" id="receiver" class="dropdown" required>
-            {% for u in users %}
-            <option value="{{ u }}">{{ u.username }}</option>
+    <div class="chat-inbox">
+        {% if messages %}
+            {% regroup messages by sender.username as sender_groups %}
+            
+            {% for group in sender_groups %}
+                <div class="conversation">
+                    <div class="conversation-header">
+                        Conversation with {{ group.grouper }}
+                    </div>
+                    {% for m in group.list %}
+                        <div class="message-content">
+                            {{ m.sender.username }} ➔ {{ m.receiver.username }}: {{ m.content }}
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
+        {% else %}
+            <div class="no-messages">No messages found.</div>
+        {% endif %}
+    </div>
+
+    <div class="top-controls">
+      <form method="GET" class="filter-form">
+          <label for="message_type">Filter by:</label>
+          <select name="message_type" id="message_type" class="dropdown">
+              <option value="all">All</option>
+              <option value="sent">Sent</option>
+              <option value="received">Received</option>
           </select>
-          <div>
-            <input type="text" name="content" placeholder="Send a message" value="{{ content }}" required>
-          </div>
-        <button class="submit-btn">Send</button>
+          <button class="submit-btn">Filter</button>
       </form>
-
-      <form action="{% url 'home' %}" class="login-form">
-        <button class="submit-btn">Back to home</button>
+  
+      <form action="{% url 'create-message' %}" method="POST" class="message-form">
+          {% csrf_token %}
+          <label for="receiver">Send a new message:</label>
+          <select name="receiver" id="receiver" class="dropdown" required>
+              {% for u in users %}
+              <option value="{{ u }}">{{ u.username }}</option>
+              {% endfor %}
+          </select>
       </form>
+  </div>
+  
+  <div class="bottom-controls">
+      <form action="{% url 'create-message' %}" method="POST" class="send-message-form">
+          {% csrf_token %}
+          <input type="text" name="content" placeholder="Write your message..." required class="message-input">
+          <button class="submit-btn">➤</button>
+      </form>
+  </div>
+  
 
-    </body>
+    <!-- <div style="margin-top: 20px;">
+        <form action="{% url 'home' %}">
+            <button class="submit-btn">Back to Home</button>
+        </form>
+    </div> -->
+
+</body>
+
 {% endblock %}
 </html>
