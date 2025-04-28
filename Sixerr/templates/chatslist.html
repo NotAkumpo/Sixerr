@@ -1,0 +1,87 @@
+<!doctype html>
+{% extends 'taskbar.html' %}
+{% load static %}
+<html lang="en">
+{% block content %}
+
+    <head>
+        <meta charset="utf-8">
+        <title>Home Screen</title>
+        <link rel="stylesheet" href="{% static 'css/home.css' %}?v=1.0">
+
+    </head>
+
+    <body>
+      <!-- <h1>Sixerr.</h1> -->
+      <img src="{% static 'fullLogoWhite3.png' %}" alt="logo" class="fulllogo">
+
+      <!-- <form method="get">
+        <div class="search-container">
+            <input type="text" class="search-input" name="user_search" placeholder="Search for a user" value="{{ request.GET.user_search }}">
+            <button class="search-button">
+                <img src="{% static 'search-icon.png' %}" alt="Search" class="searchlogo">
+            </button>
+        </div>
+      </form>
+
+      <div>
+          {% for u in users %}
+          <form method="get">
+            <button type="submit" name="user_chat" value={{u}} >{{ u }}</button>
+          </form>
+          {% endfor %}
+      </div>
+
+      <div>
+        {% if current_chat %}
+          {{ current_chat }}
+          {% for m in current_messages %}
+            {{ m.sender.username }}: {{ m.content }}
+          {% endfor %}
+        {% else %}
+          There's no messages here.
+        {% endif %}
+      </div> -->
+
+      <div class="input-group">
+        <form method="GET">
+          Filter by:
+            <select name="message_type" id="message_type" class="dropdown">
+              <option value="all">all</option>
+              <option value="sent">sent</option>
+              <option value="received">recieved</option>
+            </select>
+            <button class="submit-btn">Send</button>
+        </form>
+      </div>
+
+      <div>
+        Messages:
+        {% for m in messages %}
+          Sender: {{ m.sender }}, Receiver: {{ m.receiver }} <br>
+          {{ m.content }} <br><br>
+        {% endfor %}
+      </div>
+
+      <form action="{% url 'create-message' %}" method="POST">
+        Send a new message:<br>
+        {% csrf_token %}
+        Recipient:
+          <select name="receiver" id="receiver" class="dropdown" required>
+            {% for u in users %}
+            <option value="{{ u }}">{{ u.username }}</option>
+            {% endfor %}
+          </select>
+          <div>
+            <input type="text" name="content" placeholder="Send a message" value="{{ content }}" required>
+          </div>
+        <button class="submit-btn">Send</button>
+      </form>
+
+      <form action="{% url 'home' %}" class="login-form">
+        <button class="submit-btn">Back to home</button>
+      </form>
+
+    </body>
+{% endblock %}
+</html>

@@ -19,7 +19,11 @@ from django.views.generic.edit import DeleteView
 from django.shortcuts import get_object_or_404, redirect
 from datetime import date
 from datetime import datetime
-from django.db.models import Avg
+from django.db.models import Avg, Q
+import asyncio
+from typing import AsyncGenerator
+from django.http import HttpRequest, StreamingHttpResponse, HttpResponse
+from django.db.models.functions import Lower
 
 # Create your views here.
 
@@ -473,3 +477,39 @@ def leave_review(request, booking_id):
         return redirect('home')
 
     return render(request, 'leave_review.html', {'booking': booking})
+
+class ChatListView(LoginRequiredMixin, TemplateView):
+    template_name = 'chatslist.html'
+
+    login_url = reverse_lazy('login_view')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        messages = Message.objects.all()
+        type = self.request.GET.get('message_type')
+        context['users'] = User.objects.all()
+        username = self.request.user
+
+        if type == "sent":
+            context['messages'] = messages.filter(sender=username)
+        elif type == 'received':
+            context['messages'] = messages.filter(receiver=username)
+        else:
+            context['messages'] = messages.filter(sender=username) | messages.filter(receiver=username)
+
+        return context
+
+@login_required
+def create_message(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        receiver = request.POST.get('receiver')
+
+        if content:
+            Message.objects.create(
+                sender = request.user,
+                receiver = User.objects.get(username=receiver),
+                content = content,
+            )
+        
+    return redirect('chats')

@@ -19,10 +19,12 @@ urlpatterns = [
     path('skillslist', SkillsListView.as_view(), name='skillslist'),
     path('edit_rate/<username>', EditRateView.as_view(), name='edit_rate'),
     path('add_balance/<username>', AddBalanceView.as_view(), name='add_balance'),
-    path('add_availability', AddAvailabilityView.as_view(), name='add_availability'),\
+    path('add_availability', AddAvailabilityView.as_view(), name='add_availability'),
     path('delete_availability/<int:availability_id>', views.delete_availability, name='delete_availability'),
     path('booking_success', SuccessBookingView.as_view(), name='success_booking'),
     path('leave_review/<str:booking_id>/', views.leave_review, name='leave_review'),
     path('delete_booking/<str:booking_id>/', views.delete_booking, name='delete_booking'),
     path('mentor/<username>/reviews/', MentorReviewsView.as_view(), name='mentor_reviews'),
+    path('chats/', ChatListView.as_view(), name='chats'),
+    path('create-message', views.create_message, name='create-message'),
 ]

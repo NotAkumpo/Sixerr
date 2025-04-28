@@ -84,3 +84,12 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.client} for {self.mentor}"
+    
+class Message(models.Model):
+    def get_default_user():
+        return User.objects.get_or_create(username = 'default')[0].id
+    
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender', default=get_default_user, null=False, blank=False)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver', default=get_default_user, null=False, blank=False)
+    content = models.TextField()
+    created_at = (models.DateTimeField(auto_now_add=True))
