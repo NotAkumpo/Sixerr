@@ -60,7 +60,7 @@
           <button class="submit-btn">Filter</button>
       </form>
   
-      <form action="{% url 'create-message' %}" method="POST" class="message-form">
+      <!-- <form action="{% url 'create-message' %}" method="POST" class="message-form">
           {% csrf_token %}
           <label for="receiver">Send a new message:</label>
           <select name="receiver" id="receiver" class="dropdown" required>
@@ -68,15 +68,28 @@
               <option value="{{ u }}">{{ u.username }}</option>
               {% endfor %}
           </select>
-      </form>
+      </form> -->
   </div>
   
   <div class="bottom-controls">
-      <form action="{% url 'create-message' %}" method="POST" class="send-message-form">
+      <!-- <form action="{% url 'create-message' %}" method="POST" class="send-message-form">
           {% csrf_token %}
           <input type="text" name="content" placeholder="Write your message..." required class="message-input">
           <button class="submit-btn">➤</button>
-      </form>
+      </form> -->
+
+    <form action="{% url 'create-message' %}" method="POST" class="send-message-form">
+        {% csrf_token %}
+        <label for="receiver">Send a new message:</label>
+        <select name="receiver" id="receiver" class="dropdown" required>
+            {% for u in users %}
+            <option value="{{ u }}">{{ u.username }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="content" placeholder="Write your message..." required class="message-input">
+        <button class="submit-btn">➤</button>
+    </form>
+    
   </div>
   
 
