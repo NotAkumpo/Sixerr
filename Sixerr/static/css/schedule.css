@@ -74,6 +74,14 @@ h1{
     margin-right: auto;
 }
 
+form {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+}
+
+
 ul {
     overflow: visible !important;
 }
