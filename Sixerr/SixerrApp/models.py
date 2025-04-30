@@ -49,7 +49,7 @@ class Booking(models.Model):
         primary_key=True,
         unique=True,
         null=False, 
-        max_length=20
+        max_length=100
         )
     
     client = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, related_name='client_bookings')
@@ -80,7 +80,7 @@ class Review(models.Model):
     mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mentor_reviews')
     rating = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     review_text = models.TextField()
-    booking = models.OneToOneField(Booking, on_delete=models.CASCADE) 
+    booking = models.OneToOneField(Booking, on_delete=models.SET_NULL, null=True, blank=True, related_name='review') 
 
     def __str__(self):
         return f"Review by {self.client} for {self.mentor}"

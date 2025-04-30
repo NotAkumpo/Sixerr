@@ -164,7 +164,7 @@ img {
 }
 
 .mentor-section-container {
-    width: 400px;
+    width: 430px;
 }
 
 .section-title {
@@ -181,6 +181,8 @@ img {
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    max-height: 100%;
+    overflow: visible;
 }
 
 .info-row {
@@ -197,6 +199,8 @@ img {
   
 .value {
     flex: 1;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .value ul {
@@ -217,13 +221,23 @@ img {
     margin-left: 0px !important;
     text-align: left !important;
     font-style: normal !important;
+    overflow-y: auto;
+    display: block;
+    max-height: 150px;
+    list-style-type: none;
+    line-height: 1.5;
+
+    /* border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px;
+    background-color: #fff; */
 }
   
 .availability-list li {
     display: block;
     margin-bottom: 6px;
-    white-space: normal;
     text-align: left !important;
+    white-space: nowrap;
 }
 
 .add {

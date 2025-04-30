@@ -32,30 +32,31 @@
                             <p><strong>Current Date:</strong> {{ current_date }}</p>
                 
                             {% if current_date > booking.date %}
-                                {% if not booking.review_set.exists %}
-                                    <a href="{% url 'leave_review' booking_id=booking.booking_id %}">
-                                        <button>Leave a Review</button>
-                                    </a>
-                                {% else %}
+                            {% if booking.has_review %}
+                                <form method="post" action="{% url 'delete_booking' booking_id=booking.booking_id %}">
+                                    {% csrf_token %}
+                                    <button>Delete Booking</button>
+                                </form>
+                            {% else %}
+                                <a href="{% url 'leave_review' booking_id=booking.booking_id %}">
+                                    <button>Leave a Review</button>
+                                </a>
+                            {% endif %}
+                            {% elif current_date == booking.date %}
+                            {% if current_hour > booking.int_end_time %}
+                                {% if booking.has_review %}
                                     <form method="post" action="{% url 'delete_booking' booking_id=booking.booking_id %}">
                                         {% csrf_token %}
                                         <button>Delete Booking</button>
                                     </form>
-                                {% endif %}
-                            
-                            {% elif current_date == booking.date and current_hour > booking.int_end_time %}
-                
-                                {% if not booking.review_set.exists %}
+                                {% else %}
                                     <a href="{% url 'leave_review' booking_id=booking.booking_id %}">
                                         <button>Leave a Review</button>
                                     </a>
-                                {% else %}
-                                    <form method="post" action="{% url 'delete_booking' booking_id=booking.booking_id %}">
-                                        {% csrf_token %}
-                                        <button>Delete Booking</button>
-                                    </form>
                                 {% endif %}
                             {% endif %}
+                        {% endif %}
+                        
                         </li>
                        
                     {% endfor %}

@@ -366,7 +366,10 @@ class ScheduleView(LoginRequiredMixin, TemplateView):
             booking.start_time = f"{(booking.start_time % 12) if booking.start_time not in [0, 12] else 12}:00 {'AM' if booking.start_time < 12 else 'PM'}"
             booking.int_end_time = booking.end_time
             booking.end_time = f"{(booking.end_time % 12) if booking.end_time not in [12, 24] else 12}:00 {'AM' if booking.end_time < 12 or booking.end_time == 24 else 'PM'}{' ND' if booking.end_time == 24 else ''}"
-            booking.has_review = Review.objects.filter(booking=booking, client=self.request.user).exists()
+            booking.has_review = Review.objects.filter(
+                mentor=booking.mentor,
+                client=self.request.user
+            ).exists()
 
         context['bookings'] = bookings
         context['current_date'] = date.today()
@@ -434,7 +437,7 @@ def delete_booking(request, booking_id):
     booking = Booking.objects.get(booking_id=booking_id)
     if booking.client == request.user:
         booking.delete()
-    return redirect('mentor_list')
+    return redirect('schedule')
 
 
 @login_required
@@ -473,7 +476,7 @@ def leave_review(request, booking_id):
             mentor.save()
 
         # Delete the booking after review
-        booking.delete()
+            booking.delete()
         return redirect('home')
 
     return render(request, 'leave_review.html', {'booking': booking})
